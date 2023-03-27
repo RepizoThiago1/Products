@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Products.Domain.DTO;
 using Products.Domain.Entities;
-using Products.Domain.Interfaces.Repository;
+using Products.Domain.Interfaces.Services;
+using Products.Service;
 
 namespace Products.Api.Controllers
 {
@@ -8,17 +10,17 @@ namespace Products.Api.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly  IProductRepository _repository;
+        private readonly IProductService _service;
 
-        public ProductController(IProductRepository repository)
+        public ProductController(IProductService service)
         {
-            _repository = repository;
+            _service = service;
         }
 
         [HttpGet("{productId}")]
-        public ActionResult<Product> GetProduct(Guid productId)
+        public ActionResult<Product> GetProduct(int productId)
         {
-            var product = _repository.GetById(productId);
+            var product = _service.GetProduct(productId);
 
             return Ok(product);
         }
@@ -26,15 +28,23 @@ namespace Products.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Product>> GetProducts()
         {
-            var products = _repository.GetAll();
+            var products = _service.GetAllProducts();
 
             return Ok(products);
         }
 
         [HttpPost]
-        public ActionResult<Product> AddProduct (Product product)
+        public ActionResult<Product> AddProduct(CreateProductDTO product)
         {
-            _repository.Add(product);
+            _service.AddProduct(product);
+
+            return Ok(product);
+        }
+
+        [HttpPost]
+        public ActionResult<Product> Test(CreateCategoryProductDTO dto)
+        {
+            var product = _service.GetProduct(dto.ProductsId);
 
             return Ok(product);
         }

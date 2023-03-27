@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Products.Domain.DTO;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Services;
 
@@ -16,7 +17,7 @@ namespace Products.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Category> GetCategory(Guid id)
+        public ActionResult<Category> GetCategory(int id)
         {
             var category = _service.GetCategory(id);
 
@@ -32,11 +33,11 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Category> AddCategory(Category category)
+        public ActionResult<Category> AddCategory(CreateCategoryDTO categoryDTO)
         {
-            _service.AddCategory(category);
+            _service.AddCategory(categoryDTO);
 
-            return Ok(category);
+            return Ok(categoryDTO);
         }
     }
 }

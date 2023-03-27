@@ -10,6 +10,12 @@ namespace Products.Data.Context
         public DbSet<Category> Categories { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Category>()
+        //        .HasOne(c => c.Product)
+        //        .WithMany(p => p.Categories);
+        //}
     }
 
     //Criar o context no tempo de design

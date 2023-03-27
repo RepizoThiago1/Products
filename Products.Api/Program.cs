@@ -14,8 +14,11 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Project;Encrypt=False;Trust Server Certificate=True");
 });
 
+//Repos
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+//Services
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 

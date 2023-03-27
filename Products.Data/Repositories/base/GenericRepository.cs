@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Products.Data.Context;
+using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository.@base;
 using System.Linq.Expressions;
 
@@ -33,6 +34,10 @@ namespace Products.Data.Repositories.@base
             return _context.Set<T>().ToList();
         }
         public T GetById(Guid id)
+        {
+            return _context.Set<T>().Find(id);
+        }
+        public T GetById(int id)
         {
             return _context.Set<T>().Find(id);
         }

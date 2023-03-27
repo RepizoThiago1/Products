@@ -1,4 +1,5 @@
-﻿using Products.Domain.Entities;
+﻿using Products.Domain.DTO;
+using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
@@ -12,20 +13,20 @@ namespace Products.Service
             _repository = repository;
         }
 
-        public Category AddCategory(Category category)
+        public Category AddCategory(CreateCategoryDTO categoryDTO)
         {
-            var dbCheck = _repository.Find(c => c.Reference == category.Reference);
 
-            if (dbCheck != null)
+            Category category = new()
             {
-                throw new Exception("You cannot add a category with same reference name");
-            }
+                CategoryName = categoryDTO.CategoryName,
+                Reference = categoryDTO.Reference
+            };
 
             _repository.Add(category);
             return category;
         }
 
-        public Category GetCategory(Guid id)
+        public Category GetCategory(int id)
         {
             _repository.GetById(id);
 

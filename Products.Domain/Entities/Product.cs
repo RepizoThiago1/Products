@@ -6,8 +6,7 @@ namespace Products.Domain.Entities
     public class Product
     {
         [Key]
-        [JsonIgnore]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
@@ -16,8 +15,6 @@ namespace Products.Domain.Entities
         public decimal Price { get; set; }
         public bool IsActive { get; set; } = true;
         public int Quantity { get; set; }
-        [JsonIgnore]
-        public DateTime CreatedAt { get; set; }
         public List<Category> Categories { get; set; }
     }
 }

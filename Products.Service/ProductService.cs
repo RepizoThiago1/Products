@@ -1,23 +1,43 @@
-﻿using Products.Domain.Entities;
+﻿using Products.Domain.DTO;
+using Products.Domain.Entities;
+using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
 namespace Products.Service
 {
     public class ProductService : IProductService
     {
-        public Category AddProduct(Product product)
+        private readonly IProductRepository _repository;
+
+        public ProductService(IProductRepository repository)
         {
-            throw new NotImplementedException();
+            _repository = repository;
         }
 
-        public IEnumerable<Category> GetAllCategories()
+        public Product AddProduct(CreateProductDTO productDTO)
         {
-            throw new NotImplementedException();
+            Product product = new();
+            {
+                product.Name = productDTO.Name;
+                product.Description = productDTO.Description;
+                product.Price = productDTO.Price;
+                product.IsActive = productDTO.IsActive;
+                product.Quantity = productDTO.Quantity;
+            }
+
+            _repository.Add(product);
+
+            return product;
         }
 
-        public Category GetCategory(Guid id)
+        public IEnumerable<Product> GetAllProducts()
         {
-            throw new NotImplementedException();
+            return _repository.GetAll();
+        }
+
+        public Product GetProduct(int id)
+        {
+            return _repository.GetById(id);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Products.Data.Context;
-using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository.@base;
 using System.Linq.Expressions;
 

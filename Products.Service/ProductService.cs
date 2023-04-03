@@ -23,6 +23,7 @@ namespace Products.Service
                 product.Price = productDTO.Price;
                 product.IsActive = productDTO.IsActive;
                 product.Quantity = productDTO.Quantity;
+                product.CategoryId = productDTO.CategoryId;
             }
 
             _repository.Add(product);

@@ -16,10 +16,10 @@ namespace Products.Api.Controllers
             _service = service;
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Category> GetCategory(int id)
+        [HttpGet("{categoryId}")]
+        public ActionResult<Category> GetCategory(int categoryId)
         {
-            var category = _service.GetCategory(id);
+            var category = _service.GetCategory(categoryId);
 
             return Ok(category);
         }

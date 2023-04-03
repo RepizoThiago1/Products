@@ -8,14 +8,10 @@ namespace Products.Data.Context
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrder { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<Category>()
-        //        .HasOne(c => c.Product)
-        //        .WithMany(p => p.Categories);
-        //}
     }
 
     //Criar o context no tempo de design
@@ -24,7 +20,7 @@ namespace Products.Data.Context
         public DataContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Project;Encrypt=False;Trust Server Certificate=True");
+            optionsBuilder.UseSqlServer("Data Source=DESKTOP-PSV4525\\SQLEXPRESS;Initial Catalog=Products;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
 
             return new DataContext(optionsBuilder.Options);
         }

@@ -2,7 +2,6 @@
 using Products.Domain.DTO;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Services;
-using Products.Service;
 
 namespace Products.Api.Controllers
 {
@@ -37,14 +36,6 @@ namespace Products.Api.Controllers
         public ActionResult<Product> AddProduct(CreateProductDTO product)
         {
             _service.AddProduct(product);
-
-            return Ok(product);
-        }
-
-        [HttpPost]
-        public ActionResult<Product> Test(CreateCategoryProductDTO dto)
-        {
-            var product = _service.GetProduct(dto.ProductsId);
 
             return Ok(product);
         }

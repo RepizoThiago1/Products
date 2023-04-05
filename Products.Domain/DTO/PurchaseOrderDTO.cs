@@ -2,7 +2,7 @@
 
 namespace Products.Domain.DTO
 {
-    public class CreatePurchaseOrderDTO
+    public class PurchaseOrderDTO
     {
        //ARRUMAR O DTO
         public PaymentMethod PaymentMethod { get; set; }

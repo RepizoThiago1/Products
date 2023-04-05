@@ -5,7 +5,7 @@ namespace Products.Domain.Interfaces.Services
 {
     public interface IProductService
     {
-        Product AddProduct(CreateProductDTO product);
+        Product AddProduct(ProductDTO product);
         Product GetProduct(int id);
         IEnumerable<Product> GetAllProducts();
     }

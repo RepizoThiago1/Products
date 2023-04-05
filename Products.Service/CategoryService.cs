@@ -13,7 +13,7 @@ namespace Products.Service
             _repository = repository;
         }
 
-        public Category AddCategory(CreateCategoryDTO categoryDTO)
+        public Category AddCategory(CategoryDTO categoryDTO)
         {
 
             Category category = new()

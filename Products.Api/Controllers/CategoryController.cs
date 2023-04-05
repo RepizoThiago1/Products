@@ -24,7 +24,7 @@ namespace Products.Api.Controllers
             return Ok(category);
         }
 
-        [HttpGet]
+        [HttpGet("GetCategories")]
         public ActionResult<IEnumerable<Category>> GetCategories()
         {
             var list = _service.GetAllCategories();
@@ -32,8 +32,8 @@ namespace Products.Api.Controllers
             return Ok(list);
         }
 
-        [HttpPost]
-        public ActionResult<Category> AddCategory(CreateCategoryDTO categoryDTO)
+        [HttpPost("AddCategory")]
+        public ActionResult<Category> AddCategory(CategoryDTO categoryDTO)
         {
             _service.AddCategory(categoryDTO);
 

@@ -5,7 +5,7 @@ namespace Products.Domain.Interfaces.Services
 {
     public interface ICustomerService
     {
-        Customer AddCustomer(CreateCustomerDTO product);
+        Customer AddCustomer(CustomerDTO customerDTO);
         Customer GetCostumer(int id);
         IEnumerable<Customer> GetAllCostumers();
     }

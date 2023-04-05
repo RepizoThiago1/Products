@@ -2,7 +2,6 @@
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
-using System.ComponentModel.DataAnnotations;
 
 namespace Products.Service
 {
@@ -15,7 +14,7 @@ namespace Products.Service
             _repository = repository;
         }
 
-        public Customer AddCustomer(CreateCustomerDTO customerDTO)
+        public Customer AddCustomer(CustomerDTO customerDTO)
         {
             Customer customer = new()
             {

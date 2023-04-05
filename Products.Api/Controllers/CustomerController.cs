@@ -24,7 +24,7 @@ namespace Products.Api.Controllers
             return Ok(customer);
         }
 
-        [HttpGet]
+        [HttpGet("GetCustomers")]
         public ActionResult<IEnumerable<Customer>> GetCustomers ()
         {
             var customers =  _service.GetAllCostumers();
@@ -32,8 +32,8 @@ namespace Products.Api.Controllers
             return Ok(customers);
         }
 
-        [HttpPost]
-        public ActionResult<Customer> AddCustomer (CreateCustomerDTO customerDTO) 
+        [HttpPost("AddCustomers")]
+        public ActionResult<Customer> AddCustomer (CustomerDTO customerDTO) 
         {
             _service.AddCustomer(customerDTO);
 

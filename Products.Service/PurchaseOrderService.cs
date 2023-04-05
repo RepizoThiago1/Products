@@ -12,7 +12,7 @@ namespace Products.Service
         {
             _repository = repository;
         }
-        public PurchaseOrder AddPurchaseOrder(CreatePurchaseOrderDTO poDTO)
+        public PurchaseOrder AddPurchaseOrder(PurchaseOrderDTO poDTO)
         {
             /* FALTA CRIAR
              * Criar logica de implementação de 

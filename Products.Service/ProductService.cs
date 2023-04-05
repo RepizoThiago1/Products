@@ -14,17 +14,17 @@ namespace Products.Service
             _repository = repository;
         }
 
-        public Product AddProduct(CreateProductDTO productDTO)
+        public Product AddProduct(ProductDTO productDTO)
         {
-            Product product = new();
+            Product product = new()
             {
-                product.Name = productDTO.Name;
-                product.Description = productDTO.Description;
-                product.Price = productDTO.Price;
-                product.IsActive = productDTO.IsActive;
-                product.Quantity = productDTO.Quantity;
-                product.CategoryId = productDTO.CategoryId;
-            }
+                Name = productDTO.Name,
+                Description = productDTO.Description,
+                Price = productDTO.Price,
+                IsActive = productDTO.IsActive,
+                Quantity = productDTO.Quantity,
+                CategoryId = productDTO.CategoryId,
+            };
 
             _repository.Add(product);
 

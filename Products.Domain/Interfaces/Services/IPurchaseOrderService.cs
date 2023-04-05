@@ -5,7 +5,7 @@ namespace Products.Domain.Interfaces.Services
 {
     public interface IPurchaseOrderService
     {
-        PurchaseOrder AddPurchaseOrder(CreatePurchaseOrderDTO purchaseOrderDTO);
+        PurchaseOrder AddPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO);
         PurchaseOrder GetPurchaseOrder(int id);
         IEnumerable<PurchaseOrder> GetAllOrders();
     }

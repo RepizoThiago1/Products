@@ -5,7 +5,7 @@ namespace Products.Domain.Interfaces.Services
 {
     public interface ICategoryService
     {
-        Category AddCategory(CreateCategoryDTO category);
+        Category AddCategory(CategoryDTO category);
         Category GetCategory(int id);
         IEnumerable<Category> GetAllCategories();
     }

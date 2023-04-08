@@ -10,6 +10,7 @@ namespace Products.Data.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<User> Users { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
     }
@@ -20,7 +21,7 @@ namespace Products.Data.Context
         public DataContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            optionsBuilder.UseSqlServer("Data Source=DESKTOP-PSV4525\\SQLEXPRESS;Initial Catalog=Products;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            optionsBuilder.UseSqlServer("Data Source=DESKTOP-U7785QR\\SQLEXPRESS;Initial Catalog=Project;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
 
             return new DataContext(optionsBuilder.Options);
         }

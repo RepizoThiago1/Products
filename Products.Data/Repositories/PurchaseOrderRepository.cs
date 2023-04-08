@@ -11,9 +11,6 @@ namespace Products.Data.Repositories
         public PurchaseOrderRepository(DataContext context) : base(context)
         {
         }
-        public IQueryable<Product> GetProductsToOrder(string query)
-        {
-            return _context.Products.FromSqlRaw(query);
-        }
+        public IQueryable<Product> QueryOrder(string query) => _context.Products.FromSqlInterpolated($"{query}");
     }
 }

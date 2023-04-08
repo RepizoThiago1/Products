@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Products.Data.Context;
 using Products.Domain.Interfaces.Repository.@base;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Products.Data.Repositories.@base
@@ -14,7 +15,7 @@ namespace Products.Data.Repositories.@base
             _context = context;
             this.dbSet = _context.Set<T>();
         }
-        public void Add(T entity)
+        public async void Add(T entity)
         {
             _context.Set<T>().Add(entity);
             _context.SaveChanges();
@@ -39,6 +40,10 @@ namespace Products.Data.Repositories.@base
         public T GetById(int id)
         {
             return _context.Set<T>().Find(id);
+        }
+        public IQueryable<T> Query(string query)
+        {
+            return _context.Set<T>().FromSqlRaw(query);
         }
         public void Remove(T entity)
         {

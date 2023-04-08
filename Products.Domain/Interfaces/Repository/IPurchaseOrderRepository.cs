@@ -5,6 +5,7 @@ namespace Products.Domain.Interfaces.Repository
 {
     public interface IPurchaseOrderRepository : IGenericRepository<PurchaseOrder>
     {
-        public IQueryable<Product> GetProductsToOrder(string query);
+        public IQueryable<Product> QueryOrder(string query);
+
     }
 }

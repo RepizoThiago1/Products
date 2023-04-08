@@ -3,45 +3,29 @@ using Microsoft.IdentityModel.Tokens;
 using Products.Domain.DTO;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
-using Products.Domain.Interfaces.Services;
+using Products.Domain.Interfaces.Services.Config;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Products.Service
+namespace Products.Service.Config
 {
-    public class UserService : IUserService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository _repository;
         private readonly IConfiguration _configuration;
-        public UserService(IUserRepository repository, IConfiguration configuration)
+        public AuthService(IUserRepository repository, IConfiguration configuration)
         {
             _repository = repository;
             _configuration = configuration;
         }
-
-        public User Register(UserDTO userDTO)
+        public string CreateToken(UserDTO userDTO)
         {
-            User userExists = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
+            var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
 
-            if (userExists != null)
-            {
-                throw new Exception("User Already Exists");
-            }
-
-            CreatePasswordHash(userDTO.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
-
-            User user = new()
-            {
-                Email = userDTO.Email,
-                PasswordHash = PasswordHash,
-                PasswordSalt = PasswordSalt
-            };
-
-            _repository.Add(user);
-
-            return user;
+            var token = CreateToken(user);
+            return token;
         }
 
         public bool VerifyPasswordHash(UserDTO userDTO)
@@ -54,39 +38,20 @@ namespace Products.Service
             }
             return VerifyPasswordHash(userDTO.Password, user.PasswordHash, user.PasswordSalt);
         }
-
-        public string CreateToken(UserDTO userDTO)
-        {
-            var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
-
-            if (user == null)
-            {
-                return string.Empty;
-            }
-
-            var token = CreateToken(user);
-
-            return token;
-        }
-        #region Metodos privados
-        private void CreatePasswordHash(string password, out byte[] PasswordHash, out byte[] PasswordSalt)
-        {
-            using HMACSHA512 hmac = new HMACSHA512();
-            PasswordSalt = hmac.Key;
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        }
-
+        #region PrivateMethods
         private bool VerifyPasswordHash(string password, byte[] PasswordHash, byte[] PasswordSalt)
         {
             using HMACSHA512 hmac = new HMACSHA512(PasswordSalt);
             var ComputedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             return ComputedHash.SequenceEqual(PasswordHash);
         }
+
         private string CreateToken(User user)
         {
             List<Claim> claims = new()
             {
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, "dassad" )
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Secret:Token").Value));

@@ -3,7 +3,7 @@ using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
-namespace Products.Service
+namespace Products.Service.Workflow
 {
     public class CustomerService : ICustomerService
     {
@@ -38,7 +38,7 @@ namespace Products.Service
 
         public Customer GetCostumer(int id)
         {
-            return  _repository.GetById(id);
+            return _repository.GetById(id);
         }
     }
 }

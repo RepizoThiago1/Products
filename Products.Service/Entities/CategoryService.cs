@@ -3,7 +3,7 @@ using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
-namespace Products.Service
+namespace Products.Service.Workflow
 {
     public class CategoryService : ICategoryService
     {
@@ -15,6 +15,12 @@ namespace Products.Service
 
         public Category AddCategory(CategoryDTO categoryDTO)
         {
+            var categoryName = _repository.Find(x => x.CategoryName == categoryDTO.CategoryName).FirstOrDefault();
+
+            if (categoryName != null)
+            {
+                throw new Exception("Cannot use the same name in category");
+            }
 
             Category category = new()
             {

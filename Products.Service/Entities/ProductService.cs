@@ -7,6 +7,7 @@ namespace Products.Service.Workflow
 {
     public class ProductService : IProductService
     {
+        public DateOnly Batch;
         private readonly IProductRepository _repository;
 
         public ProductService(IProductRepository repository)
@@ -19,10 +20,13 @@ namespace Products.Service.Workflow
             Product product = new()
             {
                 Name = productDTO.Name,
+                SKU = productDTO.SKU,
+                Batch = $"{Batch.Day}{Batch.Month}{Batch.Year}BRGR{productDTO.SKU}",
                 Description = productDTO.Description,
                 Price = productDTO.Price,
                 IsActive = productDTO.IsActive,
                 Quantity = productDTO.Quantity,
+                Note = productDTO.Note,
                 CategoryId = productDTO.CategoryId,
             };
 

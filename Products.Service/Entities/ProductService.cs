@@ -1,4 +1,4 @@
-﻿using Products.Domain.DTO;
+﻿using Products.Domain.DTO.Product;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;

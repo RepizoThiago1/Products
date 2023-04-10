@@ -1,4 +1,4 @@
-﻿using Products.Domain.DTO;
+﻿using Products.Domain.DTO.Category;
 using Products.Domain.Entities;
 
 namespace Products.Domain.Interfaces.Services

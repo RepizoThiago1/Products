@@ -1,4 +1,4 @@
-﻿using Products.Domain.DTO;
+﻿using Products.Domain.DTO.User;
 
 namespace Products.Domain.Interfaces.Services.Config
 {

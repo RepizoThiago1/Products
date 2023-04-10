@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Products.Domain.DTO;
+using Products.Domain.DTO.Product;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Services;
 

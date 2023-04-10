@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Products.Domain.DTO;
+using Products.Domain.DTO.User;
 using Products.Domain.Interfaces.Services.Config;
 
 namespace Products.Api.Controllers

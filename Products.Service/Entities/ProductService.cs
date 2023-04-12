@@ -21,7 +21,7 @@ namespace Products.Service.Workflow
             {
                 Name = productDTO.Name,
                 SKU = productDTO.SKU,
-                Batch = $"{Batch.Day}{Batch.Month}{Batch.Year}BRGR{productDTO.SKU}",
+                Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU}", //GR = good recipt 
                 Description = productDTO.Description,
                 Price = productDTO.Price,
                 IsActive = productDTO.IsActive,

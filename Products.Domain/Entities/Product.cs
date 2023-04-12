@@ -22,9 +22,9 @@ namespace Products.Domain.Entities
         public int Quantity { get; set; }
         [Required]
         public int CategoryId { get; set; }
+        public List<PurchaseOrder>? Orders { get; set; }
         public string Note { get; set; }
         [Required]
-        public List<PurchaseOrder> PurchaseOrders { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }

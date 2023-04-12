@@ -1,12 +1,11 @@
-﻿using Products.Api.Controllers;
-using Products.Domain.DTO.PurchaseOrder;
+﻿using Products.Domain.DTO.PurchaseOrder;
 using Products.Domain.Entities;
 
 namespace Products.Domain.Interfaces.Services
 {
     public interface IPurchaseOrderService
     {
-        public Queue<Product> ProductFifo { get; set; }
+        public List<Product> ProductList { get; set; }
         public decimal TotalPrice { get; set; }
         PurchaseOrder CreatePurchaseOrder(PurchaseOrderRequestDTO purchaseOrderDTO);
         PurchaseOrder GetPurchaseOrder(int id);

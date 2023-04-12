@@ -8,8 +8,8 @@ namespace Products.Domain.Entities
         public string OrderNumber { get; set; }
         public decimal TotalPrice { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
-        List<Customer> Customers { get; set; }
-        List<Product> Products { get; set; }
+        public Customer Customer { get; set; }
+        public List<Product> Products { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

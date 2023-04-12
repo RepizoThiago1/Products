@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Products.Data.Context;
 using Products.Data.Repositories;
+using Products.Data.Repositories.@base;
 using Products.Domain.Interfaces.Repository;
-using Products.Domain.Interfaces.Services.Config;
+using Products.Domain.Interfaces.Repository.@base;
 using Products.Domain.Interfaces.Services;
+using Products.Domain.Interfaces.Services.Config;
 using Products.Service.Config;
 using Products.Service.Workflow;
 using Products.Service.WorkFlow;
-using Products.Domain.Interfaces.Repository.@base;
-using Products.Data.Repositories.@base;
 
 namespace Products.Api.Config
 {

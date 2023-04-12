@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Products.Domain.DTO;
+using Products.Domain.DTO.PurchaseOrder;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Services;
 
@@ -17,9 +17,9 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Queue<Product>> GetOrder (List<TestRequestDTO> request)
+        public ActionResult<PurchaseOrder> GetOrder (PurchaseOrderRequestDTO request)
         {
-            var response = _service.CreateProductList(request);
+            var response = _service.CreatePurchaseOrder(request);
 
             if (response == null) 
             {

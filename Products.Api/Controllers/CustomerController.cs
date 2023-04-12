@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Products.Domain.DTO.Customer;
+using Products.Domain.DTO;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Services;
 
@@ -24,7 +24,7 @@ namespace Products.Api.Controllers
             return Ok(customer);
         }
 
-        [HttpGet("GetCustomers")]
+        [HttpGet("customer")]
         public ActionResult<IEnumerable<Customer>> GetCustomers ()
         {
             var customers =  _service.GetAllCostumers();
@@ -32,7 +32,7 @@ namespace Products.Api.Controllers
             return Ok(customers);
         }
 
-        [HttpPost("AddCustomers")]
+        [HttpPost("customer")]
         public ActionResult<Customer> AddCustomer (CustomerDTO customerDTO) 
         {
             _service.AddCustomer(customerDTO);

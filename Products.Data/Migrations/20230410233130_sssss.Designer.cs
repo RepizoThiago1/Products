@@ -12,8 +12,8 @@ using Products.Data.Context;
 namespace Products.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230405195616_aaa")]
-    partial class aaa
+    [Migration("20230410233130_sssss")]
+    partial class sssss
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,21 @@ namespace Products.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ProductPurchaseOrder", b =>
+                {
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrdersId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("ProductPurchaseOrder");
+                });
 
             modelBuilder.Entity("Products.Domain.Entities.Category", b =>
                 {
@@ -67,6 +82,9 @@ namespace Products.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CustomerCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -102,6 +120,10 @@ namespace Products.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Batch")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -119,11 +141,19 @@ namespace Products.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -146,7 +176,7 @@ namespace Products.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("OrderNumber")
@@ -154,9 +184,6 @@ namespace Products.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
@@ -168,8 +195,6 @@ namespace Products.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("PurchaseOrder");
                 });
@@ -199,6 +224,21 @@ namespace Products.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ProductPurchaseOrder", b =>
+                {
+                    b.HasOne("Products.Domain.Entities.PurchaseOrder", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Products.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Products.Domain.Entities.Product", b =>
                 {
                     b.HasOne("Products.Domain.Entities.Category", null)
@@ -210,13 +250,13 @@ namespace Products.Data.Migrations
 
             modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
                 {
-                    b.HasOne("Products.Domain.Entities.Customer", null)
+                    b.HasOne("Products.Domain.Entities.Customer", "Customer")
                         .WithMany("PurchaseOrders")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Products.Domain.Entities.Product", null)
-                        .WithMany("PurchaseOrders")
-                        .HasForeignKey("ProductId");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.Category", b =>
@@ -225,11 +265,6 @@ namespace Products.Data.Migrations
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.Customer", b =>
-                {
-                    b.Navigation("PurchaseOrders");
-                });
-
-            modelBuilder.Entity("Products.Domain.Entities.Product", b =>
                 {
                     b.Navigation("PurchaseOrders");
                 });

@@ -1,4 +1,4 @@
-﻿using Products.Domain.DTO.Customer;
+﻿using Products.Domain.DTO;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
@@ -16,9 +16,17 @@ namespace Products.Service.Workflow
 
         public Customer AddCustomer(CustomerDTO customerDTO)
         {
+            var nameCheck = _repository.Find(c => c.CustomerCode == customerDTO.CustomerCode).FirstOrDefault();
+
+            if(nameCheck != null)
+            {
+                throw new Exception("Client name already exists");
+            }
+
             Customer customer = new()
             {
                 Name = customerDTO.Name,
+                CustomerCode = $"BRCC{customerDTO.CustomerCode}", //CC = customer code
                 Address = customerDTO.Address,
                 TelephoneNumber = customerDTO.TelephoneNumber,
                 Email = customerDTO.Email,

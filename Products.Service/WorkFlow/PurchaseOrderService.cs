@@ -1,4 +1,5 @@
-﻿using Products.Domain.DTO.PurchaseOrder;
+﻿using Products.Domain.DTO;
+using Products.Domain.DTO.PurchaseOrder;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
@@ -9,32 +10,55 @@ namespace Products.Service.WorkFlow
     {
         private readonly IPurchaseOrderRepository _repository;
         private readonly IProductRepository _productRepository;
+        private readonly ICustomerRepository _customerRepository;
         public decimal TotalPrice { get; set; } = 0;
+        public List<Product> ProductList { get; set; } = new List<Product>();
 
-        public Queue<Product> ProductFifo { get; set; } = new Queue<Product>();
-
-        public PurchaseOrderService(IPurchaseOrderRepository repository, IProductRepository productRepository)
+        public PurchaseOrderService(IPurchaseOrderRepository repository, IProductRepository productRepository, ICustomerRepository customerRepository)
         {
             _repository = repository;
             _productRepository = productRepository;
+            _customerRepository = customerRepository;
         }
         public PurchaseOrder CreatePurchaseOrder(PurchaseOrderRequestDTO poDTO)
         {
             var dateTime = DateTime.Now;
 
-            CreateProductList(poDTO.Products);
-            CalculatePrice(ProductFifo);
+            GetProductListToOrder(poDTO.Products);
+            TotalPrice = CalculatePrice(ProductList);
+            Customer customer = GetCustomerToOrder(poDTO.Customer);
 
             PurchaseOrder po = new()
             {
-                OrderNumber = $"BRSOB{dateTime.Year}{dateTime.Day}{dateTime.Month}",
+                Customer = customer,
+                Products = ProductList,
+                OrderNumber = $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{poDTO.Customer.CustomerCode}", //GI = Good issue
                 TotalPrice = TotalPrice,
                 PaymentMethod = poDTO.PaymentMethod,
             };
 
+            _repository.Add(po);
+
             return po;
         }
-        private Queue<Product> CreateProductList(List<PurchaseOrderProductsDTO> products)
+
+        public IEnumerable<PurchaseOrder> GetAllOrders()
+        {
+            throw new NotImplementedException();
+        }
+
+        public PurchaseOrder GetPurchaseOrder(int id)
+        {
+            throw new NotImplementedException();
+        }
+        #region Private Methods
+        private Customer GetCustomerToOrder(CustomerOrderRequestDTO request)
+        {
+            Customer? customer = _customerRepository.Find(c => c.CustomerCode == request.CustomerCode).FirstOrDefault();
+
+            return customer ?? throw new Exception("Customer does not exist");
+        }
+        private List<Product> GetProductListToOrder(List<PurchaseOrderProductsDTO> products)
         {
             foreach (var product in products)
             {
@@ -55,16 +79,17 @@ namespace Products.Service.WorkFlow
                         CategoryId = item.CategoryId,
                         Id = item.Id,
                         Note = item.Note,
+                        Price = item.Price,
                     };
 
-                    ProductFifo.Enqueue(response);
+                    ProductList.Add(response);
                     item.Quantity -= product.Quantity;
                     _productRepository.SaveChanges();
                 }
             }
-            return ProductFifo;
+            return ProductList;
         }
-        private decimal CalculatePrice(Queue<Product> products)
+        private decimal CalculatePrice(List<Product> products)
         {
             foreach (var product in products)
             {
@@ -73,15 +98,7 @@ namespace Products.Service.WorkFlow
             }
             return TotalPrice;
         }
-        public IEnumerable<PurchaseOrder> GetAllOrders()
-        {
-            throw new NotImplementedException();
-        }
-
-        public PurchaseOrder GetPurchaseOrder(int id)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
 
     }
 }

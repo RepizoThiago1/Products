@@ -17,22 +17,30 @@ namespace Products.Service.Workflow
 
         public Product AddProduct(ProductDTO productDTO)
         {
-            Product product = new()
+            try
             {
-                Name = productDTO.Name,
-                SKU = productDTO.SKU,
-                Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU}", //GR = good recipt 
-                Description = productDTO.Description,
-                Price = productDTO.Price,
-                IsActive = productDTO.IsActive,
-                Quantity = productDTO.Quantity,
-                Note = productDTO.Note,
-                CategoryId = productDTO.CategoryId,
-            };
+                Product product = new()
+                {
+                    Name = productDTO.Name,
+                    SKU = productDTO.SKU,
+                    Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU.ToUpper()}", //GR = good recipt 
+                    Description = productDTO.Description,
+                    Price = productDTO.Price,
+                    IsActive = productDTO.IsActive,
+                    Quantity = productDTO.Quantity,
+                    Note = productDTO.Note,
+                    CategoryId = productDTO.CategoryId,
+                };
 
-            _repository.Add(product);
+                _repository.Add(product);
 
-            return product;
+                return product;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
         }
 
         public IEnumerable<Product> GetAllProducts()
@@ -44,5 +52,30 @@ namespace Products.Service.Workflow
         {
             return _repository.GetById(id);
         }
+        #region Private Methods
+        private decimal ValidatePrice(decimal price)
+        {
+            /*
+             * @TODO
+             *  criar a entity de referencia
+             *  linkar a entity com o produto
+             */
+
+            /*
+             * /var reference = _repository.Find(c => c.Ref == price.Ref) ?? throw new Exception("Cannot find price reference of the product");
+             * 
+             * 
+
+                if (reference != price)
+                    throw new Exception("Price is wrong");
+
+                return price;
+             * 
+             * 
+             */
+
+            return price;
+        }
+        #endregion
     }
 }

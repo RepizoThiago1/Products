@@ -12,8 +12,8 @@ using Products.Data.Context;
 namespace Products.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230410233130_sssss")]
-    partial class sssss
+    [Migration("20230419014140_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,21 +23,6 @@ namespace Products.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("ProductPurchaseOrder", b =>
-                {
-                    b.Property<int>("OrdersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrdersId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("ProductPurchaseOrder");
-                });
 
             modelBuilder.Entity("Products.Domain.Entities.Category", b =>
                 {
@@ -112,6 +97,30 @@ namespace Products.Data.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("Products.Domain.Entities.OrderDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("PurchaseOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurchaseOrderId");
+
+                    b.ToTable("OrderDetails");
+                });
+
             modelBuilder.Entity("Products.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -145,6 +154,9 @@ namespace Products.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("OrderDetailId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -161,6 +173,10 @@ namespace Products.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("OrderDetailId")
+                        .IsUnique()
+                        .HasFilter("[OrderDetailId] IS NOT NULL");
 
                     b.ToTable("Products");
                 });
@@ -196,7 +212,7 @@ namespace Products.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("PurchaseOrder");
+                    b.ToTable("PurchaseOrders");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.User", b =>
@@ -224,19 +240,13 @@ namespace Products.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ProductPurchaseOrder", b =>
+            modelBuilder.Entity("Products.Domain.Entities.OrderDetails", b =>
                 {
-                    b.HasOne("Products.Domain.Entities.PurchaseOrder", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Products.Domain.Entities.PurchaseOrder", "PurchaseOrder")
+                        .WithMany("OrdersDetails")
+                        .HasForeignKey("PurchaseOrderId");
 
-                    b.HasOne("Products.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("PurchaseOrder");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.Product", b =>
@@ -246,6 +256,12 @@ namespace Products.Data.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Products.Domain.Entities.OrderDetails", "OrderDetails")
+                        .WithOne("Product")
+                        .HasForeignKey("Products.Domain.Entities.Product", "OrderDetailId");
+
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
@@ -267,6 +283,16 @@ namespace Products.Data.Migrations
             modelBuilder.Entity("Products.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("PurchaseOrders");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.OrderDetails", b =>
+                {
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
+                {
+                    b.Navigation("OrdersDetails");
                 });
 #pragma warning restore 612, 618
         }

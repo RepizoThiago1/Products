@@ -33,6 +33,7 @@ namespace Products.Api.Config
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
             #endregion
 
             #region Services

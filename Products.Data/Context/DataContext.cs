@@ -10,9 +10,10 @@ namespace Products.Data.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-
     }
 
     //Criar o context no tempo de design

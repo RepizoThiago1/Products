@@ -1,5 +1,4 @@
-﻿using Products.Domain.Entities;
-using Products.Domain.Enums;
+﻿using Products.Domain.Enums;
 
 namespace Products.Domain.DTO.PurchaseOrder
 {

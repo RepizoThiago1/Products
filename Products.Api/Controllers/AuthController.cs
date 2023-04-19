@@ -14,7 +14,7 @@ namespace Products.Api.Controllers
             _service = service;
         }
 
-        [HttpPost("login")]
+        [HttpPost]
         public async Task<ActionResult> Login(UserDTO RequestUserDTO)
         {
             bool verifyPassword = _service.VerifyPasswordHash(RequestUserDTO);

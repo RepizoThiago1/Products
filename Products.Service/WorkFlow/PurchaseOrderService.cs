@@ -11,45 +11,39 @@ namespace Products.Service.WorkFlow
         private readonly IPurchaseOrderRepository _repository;
         private readonly IProductRepository _productRepository;
         private readonly ICustomerRepository _customerRepository;
-        public decimal TotalPrice { get; set; } = 0;
-        public List<Product> ProductList { get; set; } = new List<Product>();
+        private readonly IOrderDetailsRepository _orderDetailsRepository;
 
-        public PurchaseOrderService(IPurchaseOrderRepository repository, IProductRepository productRepository, ICustomerRepository customerRepository)
+        public PurchaseOrderService(IPurchaseOrderRepository repository, IProductRepository productRepository, ICustomerRepository customerRepository, IOrderDetailsRepository orderDetailsRepository)
         {
             _repository = repository;
             _productRepository = productRepository;
             _customerRepository = customerRepository;
+            _orderDetailsRepository = orderDetailsRepository;
         }
         public PurchaseOrder CreatePurchaseOrder(PurchaseOrderRequestDTO poDTO)
         {
             var dateTime = DateTime.Now;
-
-            GetProductListToOrder(poDTO.Products);
-            TotalPrice = CalculatePrice(ProductList);
+            var orderDetails = GetOrderDetailsToOrder(poDTO.Products);
+            var totalPrice = CalculatePrice(orderDetails);
             Customer customer = GetCustomerToOrder(poDTO.Customer);
 
             PurchaseOrder po = new()
             {
                 Customer = customer,
-                Products = ProductList,
-                OrderNumber = $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{poDTO.Customer.CustomerCode}", //GI = Good issue
-                TotalPrice = TotalPrice,
+                OrderNumber = $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{poDTO.Customer.CustomerCode.Replace("BR", "").ToUpper()}", //GI = Good issue
+                TotalPrice = totalPrice,
                 PaymentMethod = poDTO.PaymentMethod,
             };
 
             _repository.Add(po);
 
+            foreach (var orderDetail in orderDetails)
+            {
+                orderDetail.PurchaseOrderId = po.Id;
+                _orderDetailsRepository.SaveChanges();
+            }
+
             return po;
-        }
-
-        public IEnumerable<PurchaseOrder> GetAllOrders()
-        {
-            throw new NotImplementedException();
-        }
-
-        public PurchaseOrder GetPurchaseOrder(int id)
-        {
-            throw new NotImplementedException();
         }
         #region Private Methods
         private Customer GetCustomerToOrder(CustomerOrderRequestDTO request)
@@ -58,8 +52,9 @@ namespace Products.Service.WorkFlow
 
             return customer ?? throw new Exception("Customer does not exist");
         }
-        private List<Product> GetProductListToOrder(List<PurchaseOrderProductsDTO> products)
+        private List<OrderDetails> GetOrderDetailsToOrder(List<PurchaseOrderProductsDTO> products)
         {
+            var orderDetails = new List<OrderDetails>();
             foreach (var product in products)
             {
                 // cria a lista fazendo a query via linq 
@@ -68,6 +63,13 @@ namespace Products.Service.WorkFlow
                 //Inclui o item dentro da lista caso for encontrado e cria um Product para response
                 if (item != null)
                 {
+                    OrderDetails od = new()
+                    {
+                        Quantity = product.Quantity,
+                        Price = item.Price * product.Quantity,
+                        PurchaseOrderId = null
+                    };
+
                     Product response = new()
                     {
                         SKU = item.SKU,
@@ -80,23 +82,24 @@ namespace Products.Service.WorkFlow
                         Id = item.Id,
                         Note = item.Note,
                         Price = item.Price,
+                        OrderDetailId = od.Id,
                     };
-
-                    ProductList.Add(response);
+                    orderDetails.Add(od);
                     item.Quantity -= product.Quantity;
+                    _orderDetailsRepository.Add(od);
                     _productRepository.SaveChanges();
                 }
             }
-            return ProductList;
+            return orderDetails;
         }
-        private decimal CalculatePrice(List<Product> products)
+        private decimal CalculatePrice(List<OrderDetails> ordersDetails)
         {
-            foreach (var product in products)
+            decimal totalPrice = 0;
+            foreach (var orderDetails in ordersDetails)
             {
-                decimal productPrice = product.Price * product.Quantity;
-                TotalPrice += productPrice;
+                totalPrice += orderDetails.Price;
             }
-            return TotalPrice;
+            return totalPrice;
         }
         #endregion
 

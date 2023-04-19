@@ -16,7 +16,7 @@ namespace Products.Api.Controllers
             _service = service;
         }
 
-        [HttpPost("user")]
+        [HttpPost]
         public ActionResult<User> Register(UserDTO userDTO)
         {
             if (userDTO == null)

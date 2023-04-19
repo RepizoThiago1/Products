@@ -17,16 +17,24 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PurchaseOrder> GetOrder (PurchaseOrderRequestDTO request)
+        public ActionResult<PurchaseOrder> GetOrder(PurchaseOrderRequestDTO request)
         {
-            var response = _service.CreatePurchaseOrder(request);
-
-            if (response == null) 
+            try
             {
-                return BadRequest("kkkk");
+                var response = _service.CreatePurchaseOrder(request);
+
+                if (response == null)
+                {
+                    return BadRequest("Please insert the right json format");
+                }
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
 
-            return Ok(response);
         }
     }
 }

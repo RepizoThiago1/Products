@@ -16,27 +16,35 @@ namespace Products.Service.Workflow
 
         public Customer AddCustomer(CustomerDTO customerDTO)
         {
-            var nameCheck = _repository.Find(c => c.CustomerCode == customerDTO.CustomerCode).FirstOrDefault();
-
-            if(nameCheck != null)
+            try
             {
-                throw new Exception("Client name already exists");
+                var nameCheck = _repository.Find(c => c.CustomerCode == customerDTO.CustomerCode).FirstOrDefault();
+
+                if (nameCheck != null)
+                {
+                    throw new Exception("Client name already exists");
+                }
+
+                Customer customer = new()
+                {
+                    Name = customerDTO.Name,
+                    CustomerCode = $"BRCC{customerDTO.CustomerCode.ToUpper()}", //CC = customer code
+                    Address = customerDTO.Address,
+                    TelephoneNumber = customerDTO.TelephoneNumber,
+                    Email = customerDTO.Email,
+                    ZipCode = customerDTO.ZipCode,
+                    IsActive = customerDTO.IsActive
+                };
+
+                _repository.Add(customer);
+
+                return customer;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
             }
 
-            Customer customer = new()
-            {
-                Name = customerDTO.Name,
-                CustomerCode = $"BRCC{customerDTO.CustomerCode}", //CC = customer code
-                Address = customerDTO.Address,
-                TelephoneNumber = customerDTO.TelephoneNumber,
-                Email = customerDTO.Email,
-                ZipCode = customerDTO.ZipCode,
-                IsActive = customerDTO.IsActive
-            };
-
-            _repository.Add(customer);
-
-            return customer;
         }
 
         public IEnumerable<Customer> GetAllCostumers()

@@ -37,6 +37,7 @@ namespace Products.Service.WorkFlow
 
             _repository.Add(po);
 
+            //Loppa a lista de produtos para atrelar o id da ordem de venda
             foreach (var orderDetail in orderDetails)
             {
                 orderDetail.PurchaseOrderId = po.Id;
@@ -60,7 +61,7 @@ namespace Products.Service.WorkFlow
                 // cria a lista fazendo a query via linq 
                 Product? item = _productRepository.Find(p => p.SKU == product.SKU).FirstOrDefault(p => p.Quantity > 0 && p.IsActive == true);
 
-                //Inclui o item dentro da lista caso for encontrado e cria um Product para response
+                //Inclui o item dentro da lista caso for encontrado
                 if (item != null)
                 {
                     OrderDetails od = new()
@@ -70,20 +71,6 @@ namespace Products.Service.WorkFlow
                         PurchaseOrderId = null
                     };
 
-                    Product response = new()
-                    {
-                        SKU = item.SKU,
-                        Quantity = product.Quantity,
-                        Batch = item.Batch,
-                        Name = item.Name,
-                        Description = item.Description,
-                        IsActive = item.IsActive,
-                        CategoryId = item.CategoryId,
-                        Id = item.Id,
-                        Note = item.Note,
-                        Price = item.Price,
-                        OrderDetailId = od.Id,
-                    };
                     orderDetails.Add(od);
                     item.Quantity -= product.Quantity;
                     _orderDetailsRepository.Add(od);
@@ -92,7 +79,7 @@ namespace Products.Service.WorkFlow
             }
             return orderDetails;
         }
-        private decimal CalculatePrice(List<OrderDetails> ordersDetails)
+        private static decimal CalculatePrice(List<OrderDetails> ordersDetails)
         {
             decimal totalPrice = 0;
             foreach (var orderDetails in ordersDetails)

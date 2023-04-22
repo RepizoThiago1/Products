@@ -27,6 +27,9 @@ namespace Products.Domain.Entities
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        [ForeignKey("Reference")]
+        public int ReferenceId { get; set; }
+        public ProductReferences? Reference { get; set; }
         [ForeignKey("OrderDetails")]
         public int? OrderDetailId { get; set; }
         public OrderDetails OrderDetails { get; set; }

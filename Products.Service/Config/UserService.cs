@@ -17,12 +17,11 @@ namespace Products.Service.Config
 
         public User Register(UserDTO userDTO)
         {
-            User userExists = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
+            User? userExists = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
 
             if (userExists != null)
-            {
                 throw new Exception("User Already Exists");
-            }
+
 
             CreatePasswordHash(userDTO.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
 
@@ -35,6 +34,17 @@ namespace Products.Service.Config
 
             _repository.Add(user);
 
+            return user;
+        }
+        public User UpdateRole(UpdateUserDTO userDTO)
+        {
+            User? user = _repository.Find(u => u.Email == userDTO.Email).FirstOrDefault() ?? throw new Exception("User does not exist");
+
+            if (userDTO.Role != null)
+            {
+                user.Role = userDTO.Role;
+                _repository.SaveChanges();
+            }
             return user;
         }
 

@@ -5,12 +5,11 @@ using Products.Domain.Interfaces.Repository;
 
 namespace Products.Data.Repositories
 {
-    public class UserRepository : GenericRepository<User>, IUserRepository
+    public class ProductReferencesRepository : GenericRepository<ProductReferences>, IProductReferencesRepository
     {
-        public UserRepository(DataContext context) : base(context)
+        public ProductReferencesRepository(DataContext context) : base(context)
         {
         }
-
         public void SaveChanges()
         {
             _context.SaveChanges();

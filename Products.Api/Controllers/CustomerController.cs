@@ -35,9 +35,9 @@ namespace Products.Api.Controllers
         [HttpPost]
         public ActionResult<Customer> AddCustomer (CustomerDTO customerDTO) 
         {
-            _service.AddCustomer(customerDTO);
+            Customer customer = _service.AddCustomer(customerDTO);
 
-            return Ok(customerDTO);
+            return Ok(customer);
         }
     }
 }

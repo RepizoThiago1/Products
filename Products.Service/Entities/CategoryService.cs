@@ -16,11 +16,13 @@ namespace Products.Service.Workflow
         public Category AddCategory(CategoryDTO categoryDTO)
         {
             var categoryName = _repository.Find(x => x.CategoryName == categoryDTO.CategoryName).FirstOrDefault();
+            var categoryReference = _repository.Find(x => x.Reference == categoryDTO.Reference).FirstOrDefault();
 
-            if (categoryName != null)
-            {
-                throw new Exception("Cannot use the same name in category");
-            }
+            if (categoryName != null) 
+                throw new Exception("Category name alread in use");
+
+            if (categoryReference != null)
+                throw new Exception("Reference already in use");
 
             Category category = new()
             {

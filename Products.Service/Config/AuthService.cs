@@ -51,7 +51,7 @@ namespace Products.Service.Config
             List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, "dassad" )
+                new Claim(ClaimTypes.Role, user.Role )
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Secret:Token").Value));

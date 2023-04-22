@@ -9,32 +9,44 @@ namespace Products.Service.Workflow
     {
         public DateOnly Batch;
         private readonly IProductRepository _repository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IProductReferencesRepository _referenceRepository;
 
-        public ProductService(IProductRepository repository)
+        public ProductService(IProductRepository repository, ICategoryRepository categoryRepository, IProductReferencesRepository referenceRepository)
         {
             _repository = repository;
+            _categoryRepository = categoryRepository;
+            _referenceRepository = referenceRepository;
         }
-
         public Product AddProduct(ProductDTO productDTO)
         {
             try
             {
-                Product product = new()
+                var productCategory = _categoryRepository.Find(c => c.Reference == productDTO.CategoryReference).FirstOrDefault() ?? throw new Exception("Category does not exist");
+                var productReferences = _referenceRepository.Find(p => p.SKU == productDTO.SKU).FirstOrDefault();
+                var priceCheck = ValidatePrice(productDTO);
+
+                var product = new Product();
+
+                if (priceCheck)
                 {
-                    Name = productDTO.Name,
-                    SKU = productDTO.SKU,
-                    Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU.ToUpper()}", //GR = good recipt 
-                    Description = productDTO.Description,
-                    Price = productDTO.Price,
-                    IsActive = productDTO.IsActive,
-                    Quantity = productDTO.Quantity,
-                    Note = productDTO.Note,
-                    CategoryId = productDTO.CategoryId,
-                };
-
-                _repository.Add(product);
-
-                return product;
+                    product.Name = productDTO.Name;
+                    product.SKU = productDTO.SKU;
+                    product.Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU.ToUpper()}"; //GR = good recipt 
+                    product.Description = productDTO.Description;
+                    product.Price = productDTO.Price;
+                    product.IsActive = productDTO.IsActive;
+                    product.Quantity = productDTO.Quantity;
+                    product.Note = productDTO.Note;
+                    product.CategoryId = productCategory.Id;
+                    product.ReferenceId = productReferences.Id;
+                    _repository.Add(product);
+                    return product;
+                }
+                else
+                {
+                    throw new Exception("Price is wrong");
+                }
             }
             catch (Exception e)
             {
@@ -42,39 +54,24 @@ namespace Products.Service.Workflow
             }
 
         }
-
         public IEnumerable<Product> GetAllProducts()
         {
             return _repository.GetAll();
         }
-
         public Product GetProduct(int id)
         {
             return _repository.GetById(id);
         }
         #region Private Methods
-        private decimal ValidatePrice(decimal price)
+        private bool ValidatePrice(ProductDTO productDTO)
         {
-            /*
-             * @TODO
-             *  criar a entity de referencia
-             *  linkar a entity com o produto
-             */
+            var reference = _referenceRepository.Find(r => r.SKU == productDTO.SKU).FirstOrDefault() ?? throw new Exception("Cannot find price reference of the product");
 
-            /*
-             * /var reference = _repository.Find(c => c.Ref == price.Ref) ?? throw new Exception("Cannot find price reference of the product");
-             * 
-             * 
-
-                if (reference != price)
-                    throw new Exception("Price is wrong");
-
-                return price;
-             * 
-             * 
-             */
-
-            return price;
+            if (reference.Price != productDTO.Price)
+            {
+                return false;
+            }
+            return true;
         }
         #endregion
     }

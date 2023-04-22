@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.User;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Services;
@@ -23,6 +24,16 @@ namespace Products.Api.Controllers
                 return BadRequest("User is null");
 
             var user = _service.Register(userDTO);
+            return Ok(user);
+        }
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<User> EditUserRole(UpdateUserDTO userDTO)
+        {
+            if (userDTO == null)
+                return BadRequest("User null");
+
+            var user = _service.UpdateRole(userDTO);
             return Ok(user);
         }
     }

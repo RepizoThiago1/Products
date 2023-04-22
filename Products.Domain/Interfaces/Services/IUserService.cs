@@ -6,6 +6,7 @@ namespace Products.Domain.Interfaces.Services
     public interface IUserService
     {
         public User Register(UserDTO userDTO);
+        public User UpdateRole(UpdateUserDTO userDTO);
 
     }
 }

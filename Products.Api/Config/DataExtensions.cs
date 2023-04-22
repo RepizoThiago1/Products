@@ -7,6 +7,7 @@ using Products.Domain.Interfaces.Repository.@base;
 using Products.Domain.Interfaces.Services;
 using Products.Domain.Interfaces.Services.Config;
 using Products.Service.Config;
+using Products.Service.Entities;
 using Products.Service.Workflow;
 using Products.Service.WorkFlow;
 
@@ -34,6 +35,7 @@ namespace Products.Api.Config
             services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
+            services.AddScoped<IProductReferencesRepository, ProductReferencesRepository>();
             #endregion
 
             #region Services
@@ -43,7 +45,8 @@ namespace Products.Api.Config
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>(); // so existe a service, utiliza repo do USER para funcionalidades
-            #endregion
+            services.AddScoped<IProductReferencesService, ProductReferencesService>();
+            #endregion 
 
             return services;
         }

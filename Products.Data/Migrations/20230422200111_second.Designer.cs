@@ -12,8 +12,8 @@ using Products.Data.Context;
 namespace Products.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230419014140_first")]
-    partial class first
+    [Migration("20230422200111_second")]
+    partial class second
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -163,6 +163,9 @@ namespace Products.Data.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<int>("ReferenceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SKU")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -177,6 +180,8 @@ namespace Products.Data.Migrations
                     b.HasIndex("OrderDetailId")
                         .IsUnique()
                         .HasFilter("[OrderDetailId] IS NOT NULL");
+
+                    b.HasIndex("ReferenceId");
 
                     b.ToTable("Products");
                 });
@@ -215,6 +220,40 @@ namespace Products.Data.Migrations
                     b.ToTable("PurchaseOrders");
                 });
 
+            modelBuilder.Entity("Products.Domain.Entities.Reference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("MaterialType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Size")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Reference");
+                });
+
             modelBuilder.Entity("Products.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -234,6 +273,10 @@ namespace Products.Data.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -261,7 +304,15 @@ namespace Products.Data.Migrations
                         .WithOne("Product")
                         .HasForeignKey("Products.Domain.Entities.Product", "OrderDetailId");
 
+                    b.HasOne("Products.Domain.Entities.Reference", "Reference")
+                        .WithMany()
+                        .HasForeignKey("ReferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("OrderDetails");
+
+                    b.Navigation("Reference");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
@@ -273,6 +324,15 @@ namespace Products.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.Reference", b =>
+                {
+                    b.HasOne("Products.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.Category", b =>

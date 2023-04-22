@@ -8,7 +8,7 @@
         public decimal Price { get; set; }
         public bool IsActive { get; set; } = false;
         public int Quantity { get; set; }
-        public int CategoryId { get; set; }
+        public string CategoryReference { get; set; }
         public string Note { get; set; }
     }
 }

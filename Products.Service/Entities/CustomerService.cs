@@ -18,12 +18,14 @@ namespace Products.Service.Workflow
         {
             try
             {
-                var nameCheck = _repository.Find(c => c.CustomerCode == customerDTO.CustomerCode).FirstOrDefault();
+                var customerCodeCheck = _repository.Find(c => c.CustomerCode == customerDTO.CustomerCode).FirstOrDefault();
+                var customerNameCheck = _repository.Find(c => c.Name == customerDTO.Name).FirstOrDefault();
 
-                if (nameCheck != null)
-                {
-                    throw new Exception("Client name already exists");
-                }
+                if (customerCodeCheck != null)
+                    throw new Exception("Customer code already in use");
+
+                if (customerNameCheck != null)
+                    throw new Exception("Customer name already exists");
 
                 Customer customer = new()
                 {
@@ -46,15 +48,14 @@ namespace Products.Service.Workflow
             }
 
         }
-
         public IEnumerable<Customer> GetAllCostumers()
         {
             return _repository.GetAll();
         }
-
         public Customer GetCostumer(int id)
         {
             return _repository.GetById(id);
         }
+
     }
 }

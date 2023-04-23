@@ -37,10 +37,13 @@ namespace Products.Service.WorkFlow
 
             _repository.Add(po);
 
-            //Loppa a lista de produtos para atrelar o id da ordem de venda
+            ValidateOrderNumber(poDTO);
+
+            //Loopa a lista de produtos para atrelar o id da ordem de venda
             foreach (var orderDetail in orderDetails)
             {
                 orderDetail.PurchaseOrderId = po.Id;
+                orderDetail.OrderNumber = po.OrderNumber;
                 _orderDetailsRepository.SaveChanges();
             }
 
@@ -87,6 +90,21 @@ namespace Products.Service.WorkFlow
                 totalPrice += orderDetails.Price;
             }
             return totalPrice;
+        }
+        private void ValidateOrderNumber(PurchaseOrderRequestDTO poDTO)
+        {
+            var dateTime = DateTime.Now;
+            var orders = _repository.Find(p => p.OrderNumber == $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{poDTO.Customer.CustomerCode.Replace("BR", "").ToUpper()}").ToList();
+            if (orders.Any())
+            {
+                int lastDigit = 0;
+                foreach(var order in orders)
+                {
+                    order.OrderNumber = $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{poDTO.Customer.CustomerCode.Replace("BR", "").ToUpper()}S{lastDigit}";
+                    lastDigit++;
+                    _repository.SaveChanges();
+                }
+            }
         }
         #endregion
 

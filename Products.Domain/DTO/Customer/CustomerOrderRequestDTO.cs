@@ -1,4 +1,4 @@
-﻿namespace Products.Domain.DTO
+﻿namespace Products.Domain.DTO.Customer
 {
     public class CustomerOrderRequestDTO
     {

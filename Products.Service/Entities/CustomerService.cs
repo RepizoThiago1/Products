@@ -1,9 +1,9 @@
-﻿using Products.Domain.DTO;
+﻿using Products.Domain.DTO.Customer;
 using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
-namespace Products.Service.Workflow
+namespace Products.Service.Entities
 {
     public class CustomerService : ICustomerService
     {

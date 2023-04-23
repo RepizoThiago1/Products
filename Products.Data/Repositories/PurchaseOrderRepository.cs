@@ -5,7 +5,7 @@ using Products.Domain.Interfaces.Repository;
 
 namespace Products.Data.Repositories
 {
-    public class PurchaseOrderRepository : GenericRepository<PurchaseOrder>, IPurchaseOrderRepository
+    public class PurchaseOrderRepository : GenericRepository<SalesOrder>, ISalesOrderRepository
     {
         public PurchaseOrderRepository(DataContext context) : base(context)
         {

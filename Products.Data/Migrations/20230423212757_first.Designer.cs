@@ -12,8 +12,8 @@ using Products.Data.Context;
 namespace Products.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230422200111_second")]
-    partial class second
+    [Migration("20230423212757_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -105,18 +105,21 @@ namespace Products.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("OrderNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("PurchaseOrderId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SalesOrderId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("PurchaseOrderId");
+                    b.HasIndex("SalesOrderId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -160,10 +163,13 @@ namespace Products.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("ProductQATestsId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReferenceId")
+                    b.Property<int?>("ReferenceId")
                         .HasColumnType("int");
 
                     b.Property<string>("SKU")
@@ -181,12 +187,14 @@ namespace Products.Data.Migrations
                         .IsUnique()
                         .HasFilter("[OrderDetailId] IS NOT NULL");
 
+                    b.HasIndex("ProductQATestsId");
+
                     b.HasIndex("ReferenceId");
 
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Products.Domain.Entities.ProductQATests", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -194,33 +202,41 @@ namespace Products.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("IsSizeAproved")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<bool>("IsWeightAproved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Observations")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<string>("OrderNumber")
+                    b.Property<int?>("ProductReferencesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SKU")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
+                    b.Property<float>("Size")
+                        .HasColumnType("real");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("ProductId");
 
-                    b.ToTable("PurchaseOrders");
+                    b.HasIndex("ProductReferencesId");
+
+                    b.ToTable("ProductsQATests");
                 });
 
-            modelBuilder.Entity("Products.Domain.Entities.Reference", b =>
+            modelBuilder.Entity("Products.Domain.Entities.ProductReferences", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -251,7 +267,41 @@ namespace Products.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Reference");
+                    b.ToTable("References");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("SalesOrders");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.User", b =>
@@ -285,11 +335,11 @@ namespace Products.Data.Migrations
 
             modelBuilder.Entity("Products.Domain.Entities.OrderDetails", b =>
                 {
-                    b.HasOne("Products.Domain.Entities.PurchaseOrder", "PurchaseOrder")
+                    b.HasOne("Products.Domain.Entities.SalesOrder", "SalesOrder")
                         .WithMany("OrdersDetails")
-                        .HasForeignKey("PurchaseOrderId");
+                        .HasForeignKey("SalesOrderId");
 
-                    b.Navigation("PurchaseOrder");
+                    b.Navigation("SalesOrder");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.Product", b =>
@@ -304,18 +354,48 @@ namespace Products.Data.Migrations
                         .WithOne("Product")
                         .HasForeignKey("Products.Domain.Entities.Product", "OrderDetailId");
 
-                    b.HasOne("Products.Domain.Entities.Reference", "Reference")
+                    b.HasOne("Products.Domain.Entities.ProductQATests", "ProductQATests")
                         .WithMany()
-                        .HasForeignKey("ReferenceId")
+                        .HasForeignKey("ProductQATestsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Products.Domain.Entities.ProductReferences", "Reference")
+                        .WithMany()
+                        .HasForeignKey("ReferenceId");
+
                     b.Navigation("OrderDetails");
+
+                    b.Navigation("ProductQATests");
 
                     b.Navigation("Reference");
                 });
 
-            modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Products.Domain.Entities.ProductQATests", b =>
+                {
+                    b.HasOne("Products.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("Products.Domain.Entities.ProductReferences", "ProductReferences")
+                        .WithMany()
+                        .HasForeignKey("ProductReferencesId");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ProductReferences");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.ProductReferences", b =>
+                {
+                    b.HasOne("Products.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>
                 {
                     b.HasOne("Products.Domain.Entities.Customer", "Customer")
                         .WithMany("PurchaseOrders")
@@ -324,15 +404,6 @@ namespace Products.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("Products.Domain.Entities.Reference", b =>
-                {
-                    b.HasOne("Products.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.Category", b =>
@@ -350,7 +421,7 @@ namespace Products.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>
                 {
                     b.Navigation("OrdersDetails");
                 });

@@ -22,16 +22,22 @@ namespace Products.Domain.Entities
         [Required]
         public int Quantity { get; set; }
         [Required]
-        public int CategoryId { get; set; }
         public string Note { get; set; }
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        #region Fk's
+        public virtual int CategoryId { get; set; }
+        [ForeignKey("ProductQATests")]
+        public virtual int ProductQATestsId { get; set; }
+        public virtual ProductQATests ProductQATests { get; set; }
         [ForeignKey("Reference")]
-        public int ReferenceId { get; set; }
-        public ProductReferences? Reference { get; set; }
+        public virtual int? ReferenceId { get; set; }
+        public virtual ProductReferences? Reference { get; set; }
         [ForeignKey("OrderDetails")]
-        public int? OrderDetailId { get; set; }
-        public OrderDetails OrderDetails { get; set; }
+        public virtual int? OrderDetailId { get; set; }
+        public virtual OrderDetails? OrderDetails { get; set; }
+        #endregion
     }
 }

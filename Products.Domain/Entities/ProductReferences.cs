@@ -11,8 +11,10 @@ namespace Products.Domain.Entities
         public float Weight { get; set; }
         public float Size { get; set; }
         public MaterialType MaterialType { get; set; }
+        #region FK's
         public virtual Product? Product { get; set; }
         [ForeignKey("Product")]
         public virtual int? ProductId { get; set; }
+        #endregion
     }
 }

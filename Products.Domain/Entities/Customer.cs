@@ -14,7 +14,7 @@ namespace Products.Domain.Entities
         public string Email { get; set; }
         public string ZipCode { get; set; }
         public bool IsActive { get; set; } = true;
-        public List<PurchaseOrder> PurchaseOrders { get; set; } 
+        public List<SalesOrder> PurchaseOrders { get; set; } 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }

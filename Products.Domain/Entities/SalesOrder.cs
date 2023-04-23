@@ -2,7 +2,7 @@
 
 namespace Products.Domain.Entities
 {
-    public class PurchaseOrder
+    public class SalesOrder
     {
         public int Id { get; set; }
         public string OrderNumber { get; set; }

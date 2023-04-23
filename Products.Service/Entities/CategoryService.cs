@@ -3,7 +3,7 @@ using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
-namespace Products.Service.Workflow
+namespace Products.Service.Entities
 {
     public class CategoryService : ICategoryService
     {
@@ -18,7 +18,7 @@ namespace Products.Service.Workflow
             var categoryName = _repository.Find(x => x.CategoryName == categoryDTO.CategoryName).FirstOrDefault();
             var categoryReference = _repository.Find(x => x.Reference == categoryDTO.Reference).FirstOrDefault();
 
-            if (categoryName != null) 
+            if (categoryName != null)
                 throw new Exception("Category name alread in use");
 
             if (categoryReference != null)

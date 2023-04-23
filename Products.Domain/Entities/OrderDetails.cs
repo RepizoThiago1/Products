@@ -9,8 +9,8 @@ namespace Products.Domain.Entities
         public decimal Price { get; set; }
         public string? OrderNumber { get; set; }
         public Product? Product { get; set; }
-        public PurchaseOrder? PurchaseOrder { get; set; }
-        [ForeignKey("PurchaseOrder")]
-        public int? PurchaseOrderId { get; set; }
+        public SalesOrder? SalesOrder { get; set; }
+        [ForeignKey("SalesOrder")]
+        public int? SalesOrderId { get; set; }
     }
 }

@@ -7,17 +7,17 @@ namespace Products.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PurchaseOrderController : ControllerBase
+    public class SalesOrderController : ControllerBase
     {
-        private readonly IPurchaseOrderService _service;
+        private readonly ISalesOrderService _service;
 
-        public PurchaseOrderController(IPurchaseOrderService service)
+        public SalesOrderController(ISalesOrderService service)
         {
             _service = service;
         }
 
         [HttpPost]
-        public ActionResult<PurchaseOrder> GetOrder(PurchaseOrderRequestDTO request)
+        public ActionResult<SalesOrder> GetOrder(SalesOrderDTO request)
         {
             try
             {

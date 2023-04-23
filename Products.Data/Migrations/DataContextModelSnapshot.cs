@@ -109,15 +109,15 @@ namespace Products.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("PurchaseOrderId")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("SalesOrderId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PurchaseOrderId");
+                    b.HasIndex("SalesOrderId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -161,10 +161,13 @@ namespace Products.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("ProductQATestsId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReferenceId")
+                    b.Property<int?>("ReferenceId")
                         .HasColumnType("int");
 
                     b.Property<string>("SKU")
@@ -182,9 +185,53 @@ namespace Products.Data.Migrations
                         .IsUnique()
                         .HasFilter("[OrderDetailId] IS NOT NULL");
 
+                    b.HasIndex("ProductQATestsId");
+
                     b.HasIndex("ReferenceId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.ProductQATests", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsSizeAproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsWeightAproved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Observations")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductReferencesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Size")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductReferencesId");
+
+                    b.ToTable("ProductsQATests");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.ProductReferences", b =>
@@ -221,7 +268,7 @@ namespace Products.Data.Migrations
                     b.ToTable("References");
                 });
 
-            modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -252,7 +299,7 @@ namespace Products.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("PurchaseOrders");
+                    b.ToTable("SalesOrders");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.User", b =>
@@ -286,11 +333,11 @@ namespace Products.Data.Migrations
 
             modelBuilder.Entity("Products.Domain.Entities.OrderDetails", b =>
                 {
-                    b.HasOne("Products.Domain.Entities.PurchaseOrder", "PurchaseOrder")
+                    b.HasOne("Products.Domain.Entities.SalesOrder", "SalesOrder")
                         .WithMany("OrdersDetails")
-                        .HasForeignKey("PurchaseOrderId");
+                        .HasForeignKey("SalesOrderId");
 
-                    b.Navigation("PurchaseOrder");
+                    b.Navigation("SalesOrder");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.Product", b =>
@@ -305,15 +352,36 @@ namespace Products.Data.Migrations
                         .WithOne("Product")
                         .HasForeignKey("Products.Domain.Entities.Product", "OrderDetailId");
 
-                    b.HasOne("Products.Domain.Entities.ProductReferences", "Reference")
+                    b.HasOne("Products.Domain.Entities.ProductQATests", "ProductQATests")
                         .WithMany()
-                        .HasForeignKey("ReferenceId")
+                        .HasForeignKey("ProductQATestsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Products.Domain.Entities.ProductReferences", "Reference")
+                        .WithMany()
+                        .HasForeignKey("ReferenceId");
+
                     b.Navigation("OrderDetails");
 
+                    b.Navigation("ProductQATests");
+
                     b.Navigation("Reference");
+                });
+
+            modelBuilder.Entity("Products.Domain.Entities.ProductQATests", b =>
+                {
+                    b.HasOne("Products.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("Products.Domain.Entities.ProductReferences", "ProductReferences")
+                        .WithMany()
+                        .HasForeignKey("ProductReferencesId");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ProductReferences");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.ProductReferences", b =>
@@ -325,7 +393,7 @@ namespace Products.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>
                 {
                     b.HasOne("Products.Domain.Entities.Customer", "Customer")
                         .WithMany("PurchaseOrders")
@@ -351,7 +419,7 @@ namespace Products.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Products.Domain.Entities.PurchaseOrder", b =>
+            modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>
                 {
                     b.Navigation("OrdersDetails");
                 });

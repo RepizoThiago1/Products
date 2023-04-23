@@ -3,7 +3,7 @@ using Products.Domain.Interfaces.Repository.@base;
 
 namespace Products.Domain.Interfaces.Repository
 {
-    public interface IPurchaseOrderRepository : IGenericRepository<PurchaseOrder>
+    public interface ISalesOrderRepository : IGenericRepository<SalesOrder>
     {
         public void SaveChanges();
     }

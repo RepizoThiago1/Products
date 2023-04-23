@@ -3,11 +3,10 @@ using Products.Domain.Entities;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
-namespace Products.Service.Workflow
+namespace Products.Service.Entities
 {
     public class ProductService : IProductService
     {
-        public DateOnly Batch;
         private readonly IProductRepository _repository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductReferencesRepository _referenceRepository;
@@ -22,10 +21,10 @@ namespace Products.Service.Workflow
         {
             try
             {
+                DateOnly Batch;
                 var productCategory = _categoryRepository.Find(c => c.Reference == productDTO.CategoryReference).FirstOrDefault() ?? throw new Exception("Category does not exist");
                 var productReferences = _referenceRepository.Find(p => p.SKU == productDTO.SKU).FirstOrDefault();
                 var priceCheck = ValidatePrice(productDTO);
-
                 var product = new Product();
 
                 if (priceCheck)

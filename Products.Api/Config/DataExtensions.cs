@@ -35,6 +35,7 @@ namespace Products.Api.Config
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
             services.AddScoped<IProductReferencesRepository, ProductReferencesRepository>();
+            services.AddScoped<IProductQATestsRepository, ProductQATestsRepository>();
             #endregion
 
             #region Services
@@ -45,6 +46,7 @@ namespace Products.Api.Config
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>(); // so existe a service, utiliza repo do USER para funcionalidades
             services.AddScoped<IProductReferencesService, ProductReferencesService>();
+            services.AddScoped<IProductQATestsService, ProductQATestsService>();
             #endregion 
 
             return services;

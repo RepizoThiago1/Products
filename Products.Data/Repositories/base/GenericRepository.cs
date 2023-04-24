@@ -54,5 +54,10 @@ namespace Products.Data.Repositories.@base
             _context.Set<T>().RemoveRange(entities);
             _context.SaveChanges();
         }
+
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
+        }
     }
 }

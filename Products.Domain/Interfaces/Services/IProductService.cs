@@ -8,5 +8,6 @@ namespace Products.Domain.Interfaces.Services
         Product AddProduct(ProductDTO product);
         Product GetProduct(int id);
         IEnumerable<Product> GetAllProducts();
+        public void UpdateProductStatus(Product product);
     }
 }

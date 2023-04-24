@@ -18,7 +18,7 @@ namespace Products.Domain.Entities
         [Required]
         public decimal Price { get; set; }
         [Required]
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = false;
         [Required]
         public int Quantity { get; set; }
         [Required]
@@ -30,8 +30,8 @@ namespace Products.Domain.Entities
         #region Fk's
         public virtual int CategoryId { get; set; }
         [ForeignKey("ProductQATests")]
-        public virtual int ProductQATestsId { get; set; }
-        public virtual ProductQATests ProductQATests { get; set; }
+        public virtual int? ProductQATestsId { get; set; }
+        public virtual ProductQATests? ProductQATests { get; set; }
         [ForeignKey("Reference")]
         public virtual int? ReferenceId { get; set; }
         public virtual ProductReferences? Reference { get; set; }

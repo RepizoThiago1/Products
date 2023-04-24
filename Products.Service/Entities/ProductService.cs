@@ -34,7 +34,7 @@ namespace Products.Service.Entities
                     product.Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU.ToUpper()}"; //GR = good recipt 
                     product.Description = productDTO.Description;
                     product.Price = productDTO.Price;
-                    product.IsActive = productDTO.IsActive;
+                    product.IsActive = false;
                     product.Quantity = productDTO.Quantity;
                     product.Note = productDTO.Note;
                     product.CategoryId = productCategory.Id;
@@ -52,6 +52,11 @@ namespace Products.Service.Entities
                 throw new Exception(e.Message);
             }
 
+        }
+        public void UpdateProductStatus(Product product)
+        {
+            product.IsActive = true;
+            _repository.SaveChanges();
         }
         public IEnumerable<Product> GetAllProducts()
         {

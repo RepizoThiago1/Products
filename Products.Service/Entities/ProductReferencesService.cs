@@ -29,6 +29,10 @@ namespace Products.Service.Entities
                 Weight = referenceDTO.Weight,
                 Size = referenceDTO.Size,
                 MaterialType = referenceDTO.MaterialType,
+                MaximumWeightAllowed = referenceDTO.MaximumWeightAllowed,
+                MinimumWeightAllowed = referenceDTO.MinimumWeightAllowed,
+                MaximumSizeAllowed = referenceDTO.MaximumSizeAllowed,
+                MinimumSizeAllowed = referenceDTO.MinimumSizeAllowed,
             };
 
             _repository.Add(reference);

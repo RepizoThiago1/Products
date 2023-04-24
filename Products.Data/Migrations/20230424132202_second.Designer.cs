@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Products.Data.Context;
 
@@ -11,9 +12,10 @@ using Products.Data.Context;
 namespace Products.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230424132202_second")]
+    partial class second
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,7 +163,7 @@ namespace Products.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ProductQATestsId")
+                    b.Property<int>("ProductQATestsId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -366,7 +368,9 @@ namespace Products.Data.Migrations
 
                     b.HasOne("Products.Domain.Entities.ProductQATests", "ProductQATests")
                         .WithMany()
-                        .HasForeignKey("ProductQATestsId");
+                        .HasForeignKey("ProductQATestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Products.Domain.Entities.ProductReferences", "Reference")
                         .WithMany()

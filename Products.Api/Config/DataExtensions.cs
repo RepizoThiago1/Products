@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Products.Data.Context;
 using Products.Data.Repositories;
 using Products.Data.Repositories.@base;
@@ -48,6 +49,19 @@ namespace Products.Api.Config
             services.AddScoped<IProductReferencesService, ProductReferencesService>();
             services.AddScoped<IProductQATestsService, ProductQATestsService>();
             #endregion 
+
+            return services;
+        }
+
+        public static IServiceCollection AddCorsLocalhost(this IServiceCollection services)
+        {
+            services.AddCors(o => o.AddPolicy(name: "ReactJSDomain", policy =>
+            {
+                policy.WithOrigins("http://localhost:3000")
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+            })
+            );
 
             return services;
         }

@@ -117,6 +117,10 @@ namespace Products.Data.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Weight = table.Column<float>(type: "real", nullable: false),
                     Size = table.Column<float>(type: "real", nullable: false),
+                    MaximumWeightAllowed = table.Column<float>(type: "real", nullable: false),
+                    MinimumWeightAllowed = table.Column<float>(type: "real", nullable: false),
+                    MaximumSizeAllowed = table.Column<float>(type: "real", nullable: false),
+                    MinimumSizeAllowed = table.Column<float>(type: "real", nullable: false),
                     MaterialType = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -142,7 +146,7 @@ namespace Products.Data.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    ProductQATestsId = table.Column<int>(type: "int", nullable: false),
+                    ProductQATestsId = table.Column<int>(type: "int", nullable: true),
                     ReferenceId = table.Column<int>(type: "int", nullable: true),
                     OrderDetailId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -256,8 +260,7 @@ namespace Products.Data.Migrations
                 table: "Products",
                 column: "ProductQATestsId",
                 principalTable: "ProductsQATests",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

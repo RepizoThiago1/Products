@@ -12,8 +12,8 @@ using Products.Data.Context;
 namespace Products.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230424132202_second")]
-    partial class second
+    [Migration("20230502133758_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -163,7 +163,7 @@ namespace Products.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductQATestsId")
+                    b.Property<int?>("ProductQATestsId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -368,9 +368,7 @@ namespace Products.Data.Migrations
 
                     b.HasOne("Products.Domain.Entities.ProductQATests", "ProductQATests")
                         .WithMany()
-                        .HasForeignKey("ProductQATestsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductQATestsId");
 
                     b.HasOne("Products.Domain.Entities.ProductReferences", "Reference")
                         .WithMany()

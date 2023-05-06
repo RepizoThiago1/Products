@@ -1,5 +1,6 @@
 ﻿using Products.Domain.DTO.User;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 using System.Security.Cryptography;
@@ -17,10 +18,11 @@ namespace Products.Service.Config
 
         public User Register(UserDTO userDTO)
         {
+
             User? userExists = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
 
             if (userExists != null)
-                throw new Exception("User Already Exists");
+                throw new UserAlreadyExistException();
 
 
             CreatePasswordHash(userDTO.Password, out byte[] PasswordHash, out byte[] PasswordSalt);

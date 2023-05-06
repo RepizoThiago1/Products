@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using Products.Domain.Entities;
 
 namespace Products.Data.Context
@@ -20,11 +21,11 @@ namespace Products.Data.Context
 
     //Criar o context no tempo de design
     public class DataContextContextFactory : IDesignTimeDbContextFactory<DataContext>
-    {
+    {   public IConfiguration Configuration { get; set; }
         public DataContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            optionsBuilder.UseSqlServer("Data Source=DESKTOP-PSV4525\\SQLEXPRESS;Initial Catalog=Products;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 
             return new DataContext(optionsBuilder.Options);
         }

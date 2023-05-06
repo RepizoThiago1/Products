@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.User;
 using Products.Domain.Interfaces.Services.Config;
+using Products.Domain.Responses;
+using Products.Domain.Responses.@base;
 
 namespace Products.Api.Controllers
 {
@@ -15,18 +17,38 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login(UserDTO RequestUserDTO)
+        public async Task<ActionResult<BaseResponse<UserAuthResponse>>> Login(UserDTO RequestUserDTO)
         {
-            bool verifyPassword = _service.VerifyPasswordHash(RequestUserDTO);
-
-            if (!verifyPassword)
+            try
             {
-                return BadRequest("Wrong password");
+
+                bool verifyPassword = _service.VerifyPasswordHash(RequestUserDTO);
+
+                if (!verifyPassword)
+                {
+                    return BadRequest("Wrong password");
+                }
+                
+                string token = _service.CreateToken(RequestUserDTO);
+
+                UserAuthResponse userAuthResponse = new()
+                {
+                    Token = token,
+                    ExpiresIn = DateTime.UtcNow.AddHours(8)
+                };
+
+                BaseResponse<UserAuthResponse> response = new()
+                {
+                    Message = "Logged in!",
+                    Content = userAuthResponse,
+                };
+
+                return Ok(response);
             }
-
-            string token = _service.CreateToken(RequestUserDTO);
-
-            return Ok(token);
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Products.Api.Controllers
                 UserAuthResponse userAuthResponse = new()
                 {
                     Token = token,
-                    ExpiresIn = DateTime.UtcNow.AddHours(8)
+                    ExpiresIn = 28000,
                 };
 
                 BaseResponse<UserAuthResponse> response = new()

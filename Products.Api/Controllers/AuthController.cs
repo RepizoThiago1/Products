@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.User;
 using Products.Domain.Interfaces.Services.Config;
 using Products.Domain.Responses;
@@ -28,7 +29,7 @@ namespace Products.Api.Controllers
                 {
                     return BadRequest("Wrong password");
                 }
-                
+
                 string token = _service.CreateToken(RequestUserDTO);
 
                 UserAuthResponse userAuthResponse = new()
@@ -49,6 +50,19 @@ namespace Products.Api.Controllers
             {
                 throw;
             }
+        }
+        [HttpPost("/api/Auth/Data"), Authorize]
+        public async Task<ActionResult<BaseResponse<UserAuthResponseDTO>>> DecodeData(string jwt)
+        {
+            var user = _service.GetUserFromJwt(jwt);
+
+            BaseResponse<UserAuthResponseDTO> response = new()
+            {
+                Message = "Success User found!",
+                Content = user,
+            };
+
+            return Ok(response);
         }
     }
 }

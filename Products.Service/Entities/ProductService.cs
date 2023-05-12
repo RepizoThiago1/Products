@@ -38,7 +38,7 @@ namespace Products.Service.Entities
                     product.Quantity = productDTO.Quantity;
                     product.Note = productDTO.Note;
                     product.CategoryId = productCategory.Id;
-                    product.ReferenceId = productReferences.Id;
+                    product.ReferenceId = productReferences?.Id;
                     _repository.Add(product);
                     return product;
                 }
@@ -56,6 +56,7 @@ namespace Products.Service.Entities
         public void UpdateProductStatus(Product product)
         {
             product.IsActive = true;
+            product.UpdatedAt = DateTime.Now;
             _repository.SaveChanges();
         }
         public IEnumerable<Product> GetAllProducts()
@@ -75,6 +76,7 @@ namespace Products.Service.Entities
             {
                 return false;
             }
+
             return true;
         }
         #endregion

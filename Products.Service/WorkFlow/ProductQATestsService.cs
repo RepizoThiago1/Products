@@ -1,5 +1,6 @@
-﻿using Products.Domain.DTO.ProductQATests;
-using Products.Domain.Entities;
+﻿using Products.Domain.Entities;
+using Products.Domain.DTO.ProductQATests;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
@@ -11,7 +12,6 @@ namespace Products.Service.WorkFlow
         private readonly IProductReferencesRepository _productReferencesRepository;
         private readonly IProductRepository _productRepository;
         private readonly IProductService _productService;
-
         public ProductQATestsService(IProductQATestsRepository repository, IProductReferencesRepository productReferencesRepository, IProductService productService, IProductRepository productRepository)
         {
             _repository = repository;
@@ -20,14 +20,14 @@ namespace Products.Service.WorkFlow
             _productService = productService;
         }
 
-        public ProductQATests AproveProduct(ProductQATestsDTO productQATestDTO)
+        public ProductQATests ApproveProduct(ProductQATestsDTO productQATestDTO)
         {
-            var isActive = AproveTest(productQATestDTO);
-            var isSizeAproved = CheckSize(productQATestDTO);
-            var isWeightAproved = CheckWeight(productQATestDTO);
-            var product = GetProductToTest(productQATestDTO);
             var reference = GetProductReferencesToTest(productQATestDTO);
-
+            var product = GetProductToTest(productQATestDTO);
+            var isSizeAproved = ApproveSize(productQATestDTO);
+            var isWeightAproved = ApproveWeight(productQATestDTO);
+            var observations = SetObservation(productQATestDTO);
+            var isApproved = ApproveTest(productQATestDTO);
 
             ProductQATests productQATest = new()
             {
@@ -37,10 +37,12 @@ namespace Products.Service.WorkFlow
                 IsSizeAproved = isSizeAproved,
                 IsWeightAproved = isWeightAproved,
                 ProductId = product.Id,
-                ProductReferencesId = reference.Id
+                ProductReferencesId = reference.Id,
+                Observations = observations,
+                Status = isApproved ? "Approved" : "Rejected"
             };
 
-            if (isActive)
+            if (isApproved)
             {
                 _repository.Add(productQATest);
                 product.ProductQATestsId = productQATest.Id;
@@ -48,73 +50,73 @@ namespace Products.Service.WorkFlow
                 return productQATest;
             }
 
-            throw new Exception("Product not allowed to be active");
+            throw new QATestNotApprovedException("Product not allowed to be active");
         }
 
         #region Private Methods
-        private bool AproveTest(ProductQATestsDTO productQATestDTO)
+        private string SetObservation(ProductQATestsDTO productQATestsDTO)
         {
-            bool size = CheckSize(productQATestDTO);
-            bool weight = CheckWeight(productQATestDTO);
+            string observations = "";
 
-            if (!size && !weight)
+            if (productQATestsDTO.Observations != null)
+            {
+                return productQATestsDTO.Observations;
+            }
+
+            return observations;
+        }
+        private bool ApproveTest(ProductQATestsDTO productQATestDTO)
+        {
+            bool size = ApproveSize(productQATestDTO);
+            bool weight = ApproveWeight(productQATestDTO);
+
+            if (size && weight)
+            {
+                return true;
+            }
+            else
             {
                 return false;
             }
-            return true;
         }
-        private bool CheckSize(ProductQATestsDTO productQATestDTO)
+        private bool ApproveSize(ProductQATestsDTO productQATestDTO)
         {
-            var sizeReference = _productReferencesRepository.Find(s => s.SKU == productQATestDTO.SKU).FirstOrDefault() ?? throw new Exception("There are no references about this product");
+            var sizeReference = _productReferencesRepository.Find(s => s.SKU == productQATestDTO.SKU).FirstOrDefault() ?? throw new ReferenceNotFoundException("There are no references about this product");
 
-            if (sizeReference.Size == productQATestDTO.Size)
+            if (productQATestDTO.Size >= sizeReference.MinimumSizeAllowed && productQATestDTO.Size <= sizeReference.MaximumSizeAllowed)
             {
                 return true;
             }
-
-            if (sizeReference.MinimumSizeAllowed <= productQATestDTO.Size)
+            else
             {
-                return true;
+                return false;
             }
 
-            if (sizeReference.MaximumSizeAllowed >= productQATestDTO.Size)
-            {
-                return true;
-            }
-            return false;
         }
-        private bool CheckWeight(ProductQATestsDTO productQATestDTO)
+        private bool ApproveWeight(ProductQATestsDTO productQATestDTO)
         {
-            var weightReferece = _productReferencesRepository.Find(s => s.SKU == productQATestDTO.SKU).FirstOrDefault() ?? throw new Exception("There are no references about this product");
+            var weightReferece = _productReferencesRepository.Find(s => s.SKU == productQATestDTO.SKU).FirstOrDefault() ?? throw new ReferenceNotFoundException("There are no references about this product");
 
-            if (weightReferece.Weight == productQATestDTO.Size)
+            if (productQATestDTO.Weight >= weightReferece.MinimumWeightAllowed && productQATestDTO.Weight <= weightReferece.MaximumWeightAllowed)
             {
                 return true;
             }
-
-            if (weightReferece.MinimumWeightAllowed <= productQATestDTO.Weight)
+            else
             {
-                return true;
+                return false;
             }
-
-            if (weightReferece.MaximumWeightAllowed >= productQATestDTO.Weight)
-            {
-                return true;
-            }
-
-            return false;
         }
         private Product GetProductToTest(ProductQATestsDTO productQATestDTO)
         {
             var product = _productRepository.Find(p => p.SKU == productQATestDTO.SKU).FirstOrDefault(p => p.IsActive == false && p.Batch == productQATestDTO.Batch);
 
-            return product ?? throw new Exception("Cannot find product or the batch is wrong");
+            return product ?? throw new ProductNotFoundException("Product not found");
         }
         private ProductReferences GetProductReferencesToTest(ProductQATestsDTO productQATestDTO)
         {
             var reference = _productReferencesRepository.Find(r => r.SKU == productQATestDTO.SKU).FirstOrDefault();
 
-            return reference ?? throw new Exception("Reference not found");
+            return reference ?? throw new ReferenceNotFoundException("Reference not found");
         }
         #endregion
     }

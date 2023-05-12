@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.PurchaseOrder;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 
 namespace Products.Api.Controllers
@@ -21,7 +22,7 @@ namespace Products.Api.Controllers
         {
             try
             {
-                var response = _service.CreatePurchaseOrder(request);
+                var response = _service.CreateSaleOrder(request);
 
                 if (response == null)
                 {
@@ -30,9 +31,13 @@ namespace Products.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception e)
+            catch (CustomerNotFoundException error)
             {
-                return BadRequest(e.Message);
+                return NotFound(error.Message);
+            }
+            catch (ProductNotFoundException error)
+            {
+                return NotFound(error.Message);
             }
 
         }

@@ -11,6 +11,8 @@ namespace Products.Domain.Entities
         public bool IsWeightAproved { get; set; }
         public bool IsSizeAproved { get; set; }
         public string? Observations { get; set; }
+        public string? Status { get; set; }
+        
         #region FK
         [ForeignKey("ProductReferences")]
         public virtual int? ProductReferencesId { get; set; }  

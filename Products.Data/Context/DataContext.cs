@@ -21,11 +21,11 @@ namespace Products.Data.Context
 
     //Criar o context no tempo de design
     public class DataContextContextFactory : IDesignTimeDbContextFactory<DataContext>
-    {   public IConfiguration Configuration { get; set; }
+    {   
         public DataContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlServer("Data Source=DESKTOP-U7785QR\\SQLEXPRESS;Initial Catalog=Project;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
 
             return new DataContext(optionsBuilder.Options);
         }

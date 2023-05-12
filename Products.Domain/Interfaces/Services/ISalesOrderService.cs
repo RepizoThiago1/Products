@@ -5,8 +5,8 @@ namespace Products.Domain.Interfaces.Services
 {
     public interface ISalesOrderService
     {
-        SalesOrder CreatePurchaseOrder(SalesOrderDTO purchaseOrderDTO);
-        SalesOrder GetPurchaseOrder(int id);
+        SalesOrder CreateSaleOrder(SalesOrderDTO purchaseOrderDTO);
+        SalesOrder GetSaleOrder(int id);
         IEnumerable<SalesOrder> GetAllOrders();
     }
 }

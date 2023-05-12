@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.ProductQATests;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 
 namespace Products.Api.Controllers
@@ -17,10 +18,25 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ProductQATests> AproveProduct(ProductQATestsDTO productQATestsDTO)
+        public ActionResult<ProductQATests> ApproveProduct(ProductQATestsDTO productQATestsDTO)
         {
-            var test = _service.AproveProduct(productQATestsDTO);
-            return Ok(test);
+            try
+            {
+                var test = _service.ApproveProduct(productQATestsDTO);
+                return Ok(test);
+            }
+            catch (QATestNotApprovedException error)
+            {
+                return Conflict(error.Message);
+            }
+            catch (ProductNotFoundException error)
+            {
+                return NotFound(error.Message);
+            }
+            catch (ReferenceNotFoundException error) 
+            {
+                return NotFound(error.Message);
+            }
         }
     }
 }

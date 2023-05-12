@@ -42,6 +42,7 @@ namespace Products.Api.Controllers
                 return BadRequest("User null");
 
             var user = _service.UpdateRole(userDTO);
+
             return Ok(user);
         }
     }

@@ -8,7 +8,6 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region add
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddEndpointsApiExplorer();
@@ -39,11 +38,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddCorsLocalhost();
 
-#endregion
-
 var app = builder.Build();
 
-#region use
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -59,7 +55,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-#endregion
 app.MapControllers();
 
 app.Run();

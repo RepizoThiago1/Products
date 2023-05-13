@@ -23,9 +23,9 @@ namespace Products.Api.Controllers
             if (productReferencesDTO == null)
                 return BadRequest();
 
-            var pr = _service.AddReference(productReferencesDTO);
+            var reference = _service.AddReference(productReferencesDTO);
 
-            return Ok(pr);
+            return Ok(reference);
         }
     }
 }

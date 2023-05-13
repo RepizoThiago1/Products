@@ -54,7 +54,6 @@ namespace Products.Service.Config
                     Id = user.Id,
                     Email = user.Email,
                     Role = user.Role
-
                 };
 
                 return (userdto);
@@ -63,7 +62,6 @@ namespace Products.Service.Config
             {
                 throw new Exception("user not found");
             }
-
         }
 
         #region PrivateMethods

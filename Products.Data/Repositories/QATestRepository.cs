@@ -5,9 +5,9 @@ using Products.Domain.Interfaces.Repository;
 
 namespace Products.Data.Repositories
 {
-    public class ProductQATestsRepository : GenericRepository<ProductQATests>, IProductQATestsRepository
+    public class QATestRepository : GenericRepository<QATest>, IQATestRepository
     {
-        public ProductQATestsRepository(DataContext context) : base(context)
+        public QATestRepository(DataContext context) : base(context)
         {
         }
     }

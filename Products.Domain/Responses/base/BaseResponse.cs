@@ -6,6 +6,6 @@ namespace Products.Domain.Responses.@base
     {
         public string Message { get; set; }
         public T? Content { get; set; }
-        public List<T>? ContentList { get; set; }
+        public IEnumerable<T>? ContentList { get; set; }
     }
 }

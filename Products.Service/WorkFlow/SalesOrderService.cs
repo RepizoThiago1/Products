@@ -107,7 +107,7 @@ namespace Products.Service.WorkFlow
         {
             var dateTime = DateTime.Now;
 
-            int identifierDigit = 0;
+            int identificationDigit = 0;
 
             string orderNumberDefault = $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{salesOrderDTO.Customer.CustomerCode.Replace("BR", "").ToUpper()}";
 
@@ -117,8 +117,8 @@ namespace Products.Service.WorkFlow
             {
                 foreach (var order in orders)
                 {
-                    order.OrderNumber = $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{salesOrderDTO.Customer.CustomerCode.Replace("BR", "").ToUpper()}S{identifierDigit}";
-                    identifierDigit++;
+                    order.OrderNumber = $"BRGI{dateTime.Year}{dateTime.Day}{dateTime.Month}{salesOrderDTO.Customer.CustomerCode.Replace("BR", "").ToUpper()}S{identificationDigit}";
+                    identificationDigit++;
                     _repository.SaveChanges();
                 }
             }

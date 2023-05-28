@@ -2,7 +2,7 @@
 
 namespace Products.Domain.Entities
 {
-    public class ProductQATests
+    public class QATest
     {
         public int Id { get; set; }
         public string SKU { get; set; }

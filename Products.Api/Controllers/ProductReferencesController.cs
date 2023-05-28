@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.Reference;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Service.Entities;
 
 
@@ -18,14 +19,22 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ProductReferences> AddProductReferences(ProductReferencesDTO productReferencesDTO)
+        public ActionResult<ProductReferences> AddProductReferences(ProductReferencesDTO request)
         {
-            if (productReferencesDTO == null)
-                return BadRequest();
+            try
+            {
+                if (request == null)
+                    return BadRequest();
 
-            var reference = _service.AddReference(productReferencesDTO);
+                var reference = _service.AddReference(request);
 
-            return Ok(reference);
+                return Ok(reference);
+            }
+            catch (ReferenceExistisException error)
+            {
+                return BadRequest(error.Message);
+            }
+
         }
     }
 }

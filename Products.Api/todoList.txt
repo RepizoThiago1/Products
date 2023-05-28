@@ -1,2 +1,6 @@
-﻿1 - Criar factory de response
+﻿CRIAR OS DTOS DE RETORNO
+
+PADRONIZAR AS CONTROLLERS COM O BASERESPONSE
+
+1 - padronizar codigos para cadastro de vendas /produtos
 2 - Criar upload de arquivos na api que leia csv

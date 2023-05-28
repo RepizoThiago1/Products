@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.User;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services.Config;
 using Products.Domain.Responses;
 using Products.Domain.Responses.@base;
@@ -18,19 +19,18 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BaseResponse<UserAuthResponse>>> Login(UserDTO RequestUserDTO)
+        public async Task<ActionResult<BaseResponse<UserAuthResponse>>> Login(UserDTO request)
         {
             try
             {
-
-                bool verifyPassword = _service.VerifyPasswordHash(RequestUserDTO);
+                bool verifyPassword = _service.VerifyPasswordHash(request);
 
                 if (!verifyPassword)
                 {
                     return BadRequest("Wrong password");
                 }
 
-                string token = _service.CreateToken(RequestUserDTO);
+                string token = _service.CreateToken(request);
 
                 UserAuthResponse userAuthResponse = new()
                 {
@@ -46,23 +46,31 @@ namespace Products.Api.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (UserNotFoundException error)
             {
-                throw;
+                return NotFound(error.Message);
             }
         }
         [HttpPost("/api/Auth/Data"), Authorize]
-        public async Task<ActionResult<BaseResponse<UserAuthResponseDTO>>> DecodeData(string jwt)
+        public async Task<ActionResult<BaseResponse<UserAuthResponseDTO>>> DecodeData(string request)
         {
-            var user = _service.GetUserFromJwt(jwt);
-
-            BaseResponse<UserAuthResponseDTO> response = new()
+            try
             {
-                Message = "Success User found!",
-                Content = user,
-            };
+                var user = _service.GetUserFromJwt(request);
 
-            return Ok(response);
+                BaseResponse<UserAuthResponseDTO> response = new()
+                {
+                    Message = "Success, user found!",
+                    Content = user,
+                };
+
+                return Ok(response);
+            }
+            catch (UserNotFoundException error)
+            {
+                return NotFound(error.Message);
+            }
+
         }
     }
 }

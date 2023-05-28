@@ -1,5 +1,6 @@
 ﻿using Products.Domain.DTO.Category;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
@@ -19,10 +20,10 @@ namespace Products.Service.Entities
             var categoryReference = _repository.Find(x => x.Reference == categoryDTO.Reference).FirstOrDefault();
 
             if (categoryName != null)
-                throw new Exception("Category name alread in use");
+                throw new CategoryAlreadyExistsException("Category already exists");
 
             if (categoryReference != null)
-                throw new Exception("Reference already in use");
+                throw new CategoryReferenceExists("Category reference exists");
 
             Category category = new()
             {
@@ -36,8 +37,6 @@ namespace Products.Service.Entities
 
         public Category GetCategory(int id)
         {
-            _repository.GetById(id);
-
             return _repository.GetById(id);
         }
 

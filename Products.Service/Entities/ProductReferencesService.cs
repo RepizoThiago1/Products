@@ -1,5 +1,6 @@
 ﻿using Products.Domain.DTO.Reference;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Repository;
 
 namespace Products.Service.Entities
@@ -19,7 +20,7 @@ namespace Products.Service.Entities
 
             if (referenceCheck != null)
             {
-                throw new Exception("Reference already exists");
+                throw new ReferenceExistisException("Reference already exists");
             }
 
             ProductReferences reference = new()

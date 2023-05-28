@@ -4,6 +4,7 @@ using Products.Domain.DTO.User;
 using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
+using Products.Domain.Responses.@base;
 
 namespace Products.Api.Controllers
 {
@@ -18,32 +19,86 @@ namespace Products.Api.Controllers
             _service = service;
         }
 
-        [HttpPost]
-        public ActionResult<User> Register(UserDTO userDTO)
+        [HttpPost("/api/[controller]/Validate")]
+        public ActionResult<BaseResponse<string>> ValidateUser(string key)
         {
             try
             {
-                if (userDTO == null)
-                    return BadRequest("User is null");
+                _service.ValidateConfirmKey(key);
+                BaseResponse<string> response = new()
+                {
+                    Message = "Now you're able to use our services!"
+                };
 
-                var user = _service.Register(userDTO);
-                return Ok(user);
+                return Ok(response);
+
             }
-            catch (UserAlreadyExistException e)
+            catch (UserNotFoundException error)
             {
-                return UnprocessableEntity(e.Message);
+                return NotFound(error.Message);
+            }
+            catch (InvalidConfirmKeyException error)
+            {
+                return Conflict(error.Message);
             }
         }
+
+        [HttpPost]
+        public ActionResult<BaseResponse<UserDTO>> Register(UserDTO request)
+        {
+            try
+            {
+                if (request == null)
+                    return BadRequest("User is null");
+
+                var user = _service.Register(request);
+
+                BaseResponse<UserDTO> response = new()
+                {
+                    Message = "Registered!",
+                    Content = request
+                };
+
+                return Ok(response);
+            }
+            catch (UserAlreadyExistsException error)
+            {
+                return UnprocessableEntity(error.Message);
+            }
+            catch (EmptyPasswordException error)
+            {
+                return BadRequest(error.Message);
+            }
+            catch (EmptyEmailException error)
+            {
+                return BadRequest(error.Message);
+            }
+        }
+
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public ActionResult<User> EditUserRole(UpdateUserDTO userDTO)
+        public ActionResult<BaseResponse<User>> EditUserRole(UpdateUserDTO request)
         {
-            if (userDTO == null)
-                return BadRequest("User null");
+            try
+            {
+                if (request == null)
+                    return BadRequest("User null");
 
-            var user = _service.UpdateRole(userDTO);
+                var user = _service.UpdateRole(request);
 
-            return Ok(user);
+                BaseResponse<User> response = new()
+                {
+                    Message = "",
+                    Content = user
+                };
+
+                return Ok(response);
+            }
+            catch (UserNotFoundException error)
+            {
+                return BadRequest(error.Message);
+            }
+
         }
     }
 }

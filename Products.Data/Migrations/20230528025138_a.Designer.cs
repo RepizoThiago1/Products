@@ -12,8 +12,8 @@ using Products.Data.Context;
 namespace Products.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230502133758_first")]
-    partial class first
+    [Migration("20230528025138_a")]
+    partial class a
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -111,6 +111,9 @@ namespace Products.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -118,6 +121,8 @@ namespace Products.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("SalesOrderId");
 
@@ -224,6 +229,9 @@ namespace Products.Data.Migrations
                     b.Property<float>("Size")
                         .HasColumnType("real");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<float>("Weight")
                         .HasColumnType("real");
 
@@ -324,9 +332,16 @@ namespace Products.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("ConfirmKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUserConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
@@ -347,9 +362,15 @@ namespace Products.Data.Migrations
 
             modelBuilder.Entity("Products.Domain.Entities.OrderDetails", b =>
                 {
+                    b.HasOne("Products.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
                     b.HasOne("Products.Domain.Entities.SalesOrder", "SalesOrder")
                         .WithMany("OrdersDetails")
                         .HasForeignKey("SalesOrderId");
+
+                    b.Navigation("Product");
 
                     b.Navigation("SalesOrder");
                 });
@@ -363,7 +384,7 @@ namespace Products.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Products.Domain.Entities.OrderDetails", "OrderDetails")
-                        .WithOne("Product")
+                        .WithOne()
                         .HasForeignKey("Products.Domain.Entities.Product", "OrderDetailId");
 
                     b.HasOne("Products.Domain.Entities.ProductQATests", "ProductQATests")
@@ -408,7 +429,7 @@ namespace Products.Data.Migrations
             modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>
                 {
                     b.HasOne("Products.Domain.Entities.Customer", "Customer")
-                        .WithMany("PurchaseOrders")
+                        .WithMany("SalesOrders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -423,12 +444,7 @@ namespace Products.Data.Migrations
 
             modelBuilder.Entity("Products.Domain.Entities.Customer", b =>
                 {
-                    b.Navigation("PurchaseOrders");
-                });
-
-            modelBuilder.Entity("Products.Domain.Entities.OrderDetails", b =>
-                {
-                    b.Navigation("Product");
+                    b.Navigation("SalesOrders");
                 });
 
             modelBuilder.Entity("Products.Domain.Entities.SalesOrder", b =>

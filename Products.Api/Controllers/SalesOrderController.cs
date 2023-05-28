@@ -3,6 +3,7 @@ using Products.Domain.DTO.PurchaseOrder;
 using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
+using Products.Domain.Responses.@base;
 
 namespace Products.Api.Controllers
 {
@@ -18,16 +19,22 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<SalesOrder> GetOrder(SalesOrderDTO request)
+        public ActionResult<BaseResponse<SalesOrder>> GetOrder(SalesOrderDTO request)
         {
             try
             {
-                var response = _service.CreateSaleOrder(request);
+                var saleOrder = _service.CreateSaleOrder(request);
 
-                if (response == null)
+                if (request == null)
                 {
                     return BadRequest("Please insert the right json format");
                 }
+
+                BaseResponse<SalesOrder> response = new()
+                {
+                    Message = "Order created !",
+                    Content = saleOrder
+                };
 
                 return Ok(response);
             }

@@ -3,7 +3,7 @@ using Products.Domain.Interfaces.Repository.@base;
 
 namespace Products.Domain.Interfaces.Repository
 {
-    public interface IProductQATestsRepository : IGenericRepository<ProductQATests>
+    public interface IQATestRepository : IGenericRepository<QATest>
     {
     }
 }

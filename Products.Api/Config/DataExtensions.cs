@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Products.Data.Context;
 using Products.Data.Repositories;
 using Products.Data.Repositories.@base;
@@ -36,7 +35,7 @@ namespace Products.Api.Config
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IOrderDetailsRepository, OrderDetailsRepository>();
             services.AddScoped<IProductReferencesRepository, ProductReferencesRepository>();
-            services.AddScoped<IProductQATestsRepository, ProductQATestsRepository>();
+            services.AddScoped<IQATestRepository, QATestRepository>();
             #endregion
 
             #region Services
@@ -47,7 +46,7 @@ namespace Products.Api.Config
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>(); // so existe a service, utiliza repo do USER para funcionalidades
             services.AddScoped<IProductReferencesService, ProductReferencesService>();
-            services.AddScoped<IProductQATestsService, ProductQATestsService>();
+            services.AddScoped<IQATestService, QATestService>();
             #endregion 
 
             return services;
@@ -60,8 +59,7 @@ namespace Products.Api.Config
                 policy.WithOrigins("http://localhost:3000")
                       .AllowAnyMethod()
                       .AllowAnyHeader();
-            })
-            );
+            }));
 
             return services;
         }

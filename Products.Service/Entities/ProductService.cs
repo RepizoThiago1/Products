@@ -1,5 +1,6 @@
 ﻿using Products.Domain.DTO.Product;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;
 
@@ -19,37 +20,29 @@ namespace Products.Service.Entities
         }
         public Product AddProduct(ProductDTO productDTO)
         {
-            try
-            {
-                DateOnly Batch;
-                var productCategory = _categoryRepository.Find(c => c.Reference == productDTO.CategoryReference).FirstOrDefault() ?? throw new Exception("Category does not exist");
-                var productReferences = _referenceRepository.Find(p => p.SKU == productDTO.SKU).FirstOrDefault();
-                var priceCheck = ValidatePrice(productDTO);
-                var product = new Product();
+            DateOnly Batch;
+            var productCategory = _categoryRepository.Find(c => c.Reference == productDTO.CategoryReference).FirstOrDefault() ?? throw new CategoryNotFoundException("Category does not exist");
+            var productReferences = _referenceRepository.Find(p => p.SKU == productDTO.SKU).FirstOrDefault();
+            var priceCheck = ValidatePrice(productDTO);
+            var product = new Product();
 
-                if (priceCheck)
-                {
-                    product.Name = productDTO.Name;
-                    product.SKU = productDTO.SKU;
-                    product.Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU.ToUpper()}"; //GR = good recipt 
-                    product.Description = productDTO.Description;
-                    product.Price = productDTO.Price;
-                    product.IsActive = false;
-                    product.Quantity = productDTO.Quantity;
-                    product.Note = productDTO.Note;
-                    product.CategoryId = productCategory.Id;
-                    product.ReferenceId = productReferences?.Id;
-                    _repository.Add(product);
-                    return product;
-                }
-                else
-                {
-                    throw new Exception("Price is wrong");
-                }
-            }
-            catch (Exception e)
+            if (priceCheck)
             {
-                throw new Exception(e.Message);
+                product.Name = productDTO.Name;
+                product.SKU = productDTO.SKU;
+                product.Batch = $"BRGR{Batch.Day}{Batch.Month}{Batch.Year}{productDTO.SKU.ToUpper()}"; //GR = good recipt 
+                product.Description = productDTO.Description;
+                product.Price = productDTO.Price;
+                product.IsActive = false;
+                product.Quantity = productDTO.Quantity;
+                product.CategoryId = productCategory.Id;
+                product.ReferenceId = productReferences?.Id;
+                _repository.Add(product);
+                return product;
+            }
+            else
+            {
+                throw new InvalidPriceException("Invalid price");
             }
 
         }
@@ -70,7 +63,7 @@ namespace Products.Service.Entities
         #region Private Methods
         private bool ValidatePrice(ProductDTO productDTO)
         {
-            var reference = _referenceRepository.Find(r => r.SKU == productDTO.SKU).FirstOrDefault() ?? throw new Exception("Cannot find price reference of the product");
+            var reference = _referenceRepository.Find(r => r.SKU == productDTO.SKU).FirstOrDefault() ?? throw new ReferenceNotFoundException("Cannot find price reference of the product");
 
             if (reference.Price != productDTO.Price)
             {

@@ -3,27 +3,35 @@ using Products.Domain.DTO.ProductQATests;
 using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
+using Products.Domain.Responses.@base;
 
 namespace Products.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductQATestsController : Controller
+    public class QATestController : Controller
     {
-        private readonly IProductQATestsService _service;
+        private readonly IQATestService _service;
 
-        public ProductQATestsController(IProductQATestsService service)
+        public QATestController(IQATestService service)
         {
             _service = service;
         }
 
         [HttpPost]
-        public ActionResult<ProductQATests> ApproveProduct(ProductQATestsDTO productQATestsDTO)
+        public ActionResult<BaseResponse<QATest>> ApproveProduct(QATestDTO request)
         {
             try
             {
-                var test = _service.ApproveProduct(productQATestsDTO);
-                return Ok(test);
+                var QATest = _service.ApproveProduct(request);
+
+                BaseResponse<QATest> response = new()
+                {
+                    Message = "Success !",
+                    Content = QATest,
+                };
+
+                return Ok(response);
             }
             catch (QATestNotApprovedException error)
             {
@@ -33,7 +41,7 @@ namespace Products.Api.Controllers
             {
                 return NotFound(error.Message);
             }
-            catch (ReferenceNotFoundException error) 
+            catch (ReferenceNotFoundException error)
             {
                 return NotFound(error.Message);
             }

@@ -2,7 +2,7 @@
 
 namespace Products.Domain.DTO.ProductQATests
 {
-    public class ProductQATestsDTO
+    public class QATestDTO
     {
         public string SKU { get; set; }
         public string Batch { get; set; }

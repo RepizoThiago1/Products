@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.Customer;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
+using Products.Domain.Responses.@base;
 
 namespace Products.Api.Controllers
 {
@@ -17,27 +19,57 @@ namespace Products.Api.Controllers
         }
 
         [HttpGet("{customerId}")]
-        public ActionResult<Customer> GetCustomer(int customerId)
+        public ActionResult<BaseResponse<Customer>> GetCustomer(int customerId)
         {
             var customer = _service.GetCostumer(customerId);
 
-            return Ok(customer);
+            BaseResponse<Customer> response = new()
+            {
+                Message = "Success !",
+                Content = customer,
+            };
+
+            return Ok(response);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Customer>> GetCustomers ()
+        public ActionResult<BaseResponse<IEnumerable<Customer>>> GetCustomers()
         {
-            var customers =  _service.GetAllCostumers();
+            var customers = _service.GetAllCostumers();
 
-            return Ok(customers);
+            BaseResponse<Customer> response = new()
+            {
+                Message = "Success !",
+                ContentList = customers,
+            };
+
+            return Ok(response);
         }
 
         [HttpPost]
-        public ActionResult<Customer> AddCustomer (CustomerDTO customerDTO) 
+        public ActionResult<BaseResponse<Customer>> AddCustomer(CustomerDTO request)
         {
-            Customer customer = _service.AddCustomer(customerDTO);
+            try
+            {
+                var customer = _service.AddCustomer(request);
 
-            return Ok(customer);
+                BaseResponse<Customer> response = new()
+                {
+                    Message = "Success !",
+                    Content = customer,
+                };
+
+                return Ok(customer);
+            }
+            catch (CustomerCodeExistsException error)
+            {
+                return BadRequest(error.Message);
+            }
+            catch (CustomerNameExistsException error)
+            {
+                return BadRequest(error.Message);
+            }
+
         }
     }
 }

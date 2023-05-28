@@ -6,13 +6,13 @@ using Products.Domain.Interfaces.Services;
 
 namespace Products.Service.WorkFlow
 {
-    public class ProductQATestsService : IProductQATestsService
+    public class QATestService : IQATestService
     {
-        private readonly IProductQATestsRepository _repository;
+        private readonly IQATestRepository _repository;
         private readonly IProductReferencesRepository _productReferencesRepository;
         private readonly IProductRepository _productRepository;
         private readonly IProductService _productService;
-        public ProductQATestsService(IProductQATestsRepository repository, IProductReferencesRepository productReferencesRepository, IProductService productService, IProductRepository productRepository)
+        public QATestService(IQATestRepository repository, IProductReferencesRepository productReferencesRepository, IProductService productService, IProductRepository productRepository)
         {
             _repository = repository;
             _productReferencesRepository = productReferencesRepository;
@@ -20,20 +20,20 @@ namespace Products.Service.WorkFlow
             _productService = productService;
         }
 
-        public ProductQATests ApproveProduct(ProductQATestsDTO productQATestDTO)
+        public QATest ApproveProduct(QATestDTO QATest)
         {
-            var reference = GetProductReferencesToTest(productQATestDTO);
-            var product = GetProductToTest(productQATestDTO);
-            var isSizeAproved = ApproveSize(productQATestDTO);
-            var isWeightAproved = ApproveWeight(productQATestDTO);
-            var observations = SetObservation(productQATestDTO);
-            var isApproved = ApproveTest(productQATestDTO);
+            var reference = GetProductReferencesToTest(QATest);
+            var product = GetProductToTest(QATest);
+            var isSizeAproved = ApproveSize(QATest);
+            var isWeightAproved = ApproveWeight(QATest);
+            var observations = SetObservation(QATest);
+            var isApproved = ApproveTest(QATest);
 
-            ProductQATests productQATest = new()
+            QATest productQATest = new()
             {
-                SKU = productQATestDTO.SKU,
-                Weight = productQATestDTO.Weight,
-                Size = productQATestDTO.Size,
+                SKU = QATest.SKU,
+                Weight = QATest.Weight,
+                Size = QATest.Size,
                 IsSizeAproved = isSizeAproved,
                 IsWeightAproved = isWeightAproved,
                 ProductId = product.Id,
@@ -54,7 +54,7 @@ namespace Products.Service.WorkFlow
         }
 
         #region Private Methods
-        private string SetObservation(ProductQATestsDTO productQATestsDTO)
+        private string SetObservation(QATestDTO productQATestsDTO)
         {
             string observations = "";
 
@@ -65,7 +65,7 @@ namespace Products.Service.WorkFlow
 
             return observations;
         }
-        private bool ApproveTest(ProductQATestsDTO productQATestDTO)
+        private bool ApproveTest(QATestDTO productQATestDTO)
         {
             bool size = ApproveSize(productQATestDTO);
             bool weight = ApproveWeight(productQATestDTO);
@@ -79,7 +79,7 @@ namespace Products.Service.WorkFlow
                 return false;
             }
         }
-        private bool ApproveSize(ProductQATestsDTO productQATestDTO)
+        private bool ApproveSize(QATestDTO productQATestDTO)
         {
             var sizeReference = _productReferencesRepository.Find(s => s.SKU == productQATestDTO.SKU).FirstOrDefault() ?? throw new ReferenceNotFoundException("There are no references about this product");
 
@@ -93,7 +93,7 @@ namespace Products.Service.WorkFlow
             }
 
         }
-        private bool ApproveWeight(ProductQATestsDTO productQATestDTO)
+        private bool ApproveWeight(QATestDTO productQATestDTO)
         {
             var weightReferece = _productReferencesRepository.Find(s => s.SKU == productQATestDTO.SKU).FirstOrDefault() ?? throw new ReferenceNotFoundException("There are no references about this product");
 
@@ -106,13 +106,13 @@ namespace Products.Service.WorkFlow
                 return false;
             }
         }
-        private Product GetProductToTest(ProductQATestsDTO productQATestDTO)
+        private Product GetProductToTest(QATestDTO productQATestDTO)
         {
             var product = _productRepository.Find(p => p.SKU == productQATestDTO.SKU).FirstOrDefault(p => p.IsActive == false && p.Batch == productQATestDTO.Batch);
 
             return product ?? throw new ProductNotFoundException("Product not found");
         }
-        private ProductReferences GetProductReferencesToTest(ProductQATestsDTO productQATestDTO)
+        private ProductReferences GetProductReferencesToTest(QATestDTO productQATestDTO)
         {
             var reference = _productReferencesRepository.Find(r => r.SKU == productQATestDTO.SKU).FirstOrDefault();
 

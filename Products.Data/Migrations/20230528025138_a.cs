@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Products.Data.Migrations
 {
-    public partial class first : Migration
+    public partial class a : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -55,7 +55,9 @@ namespace Products.Data.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConfirmKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsUserConfirmed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,6 +97,7 @@ namespace Products.Data.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductId = table.Column<int>(type: "int", nullable: true),
                     SalesOrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -183,6 +186,7 @@ namespace Products.Data.Migrations
                     IsWeightAproved = table.Column<bool>(type: "bit", nullable: false),
                     IsSizeAproved = table.Column<bool>(type: "bit", nullable: false),
                     Observations = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProductReferencesId = table.Column<int>(type: "int", nullable: true),
                     ProductId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -200,6 +204,11 @@ namespace Products.Data.Migrations
                         principalTable: "References",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_ProductId",
+                table: "OrderDetails",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_SalesOrderId",
@@ -249,6 +258,13 @@ namespace Products.Data.Migrations
                 column: "CustomerId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_OrderDetails_Products_ProductId",
+                table: "OrderDetails",
+                column: "ProductId",
+                principalTable: "Products",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_References_Products_ProductId",
                 table: "References",
                 column: "ProductId",
@@ -282,8 +298,8 @@ namespace Products.Data.Migrations
                 table: "Products");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Products_References_ReferenceId",
-                table: "Products");
+                name: "FK_References_Products_ProductId",
+                table: "References");
 
             migrationBuilder.DropTable(
                 name: "Users");
@@ -304,10 +320,10 @@ namespace Products.Data.Migrations
                 name: "ProductsQATests");
 
             migrationBuilder.DropTable(
-                name: "References");
+                name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "References");
         }
     }
 }

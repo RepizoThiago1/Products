@@ -3,8 +3,8 @@ using Products.Domain.Entities;
 
 namespace Products.Domain.Interfaces.Services
 {
-    public interface IProductQATestsService
+    public interface IQATestService
     {
-        public ProductQATests ApproveProduct(ProductQATestsDTO productQATestDTO);
+        public QATest ApproveProduct(QATestDTO productQATestDTO);
     }
 }

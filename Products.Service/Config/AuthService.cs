@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Products.Domain.DTO.User;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services.Config;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,12 +25,12 @@ namespace Products.Service.Config
         }
         public string CreateToken(UserDTO userDTO)
         {
-            var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
+            var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault() ?? throw new UserNotFoundException();
 
             var token = CreateToken(user);
+
             return token;
         }
-
         public bool VerifyPasswordHash(UserDTO userDTO)
         {
             var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
@@ -38,30 +39,23 @@ namespace Products.Service.Config
             {
                 return false;
             }
+
             return VerifyPasswordHash(userDTO.Password, user.PasswordHash, user.PasswordSalt);
         }
-
         public UserAuthResponseDTO GetUserFromJwt(string token)
         {
-            try
+            var userEmail = DecodeToken(token);
+
+            var user = _userRepository.Find(u => u.Email == userEmail).FirstOrDefault() ?? throw new UserNotFoundException();
+
+            UserAuthResponseDTO userAuthDTO = new()
             {
-                var userEmail = DecodeToken(token);
+                Id = user.Id,
+                Email = user.Email,
+                Role = user.Role
+            };
 
-                var user = _userRepository.Find(u => u.Email == userEmail).FirstOrDefault();
-
-                UserAuthResponseDTO userdto = new()
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Role = user.Role
-                };
-
-                return (userdto);
-            }
-            catch (Exception)
-            {
-                throw new Exception("user not found");
-            }
+            return (userAuthDTO);
         }
 
         #region PrivateMethods

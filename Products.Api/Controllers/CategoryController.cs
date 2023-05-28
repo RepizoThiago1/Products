@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Domain.DTO.Category;
 using Products.Domain.Entities;
+using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
+using Products.Domain.Responses.@base;
 
 namespace Products.Api.Controllers
 {
@@ -17,27 +19,56 @@ namespace Products.Api.Controllers
         }
 
         [HttpGet("{categoryId}")]
-        public ActionResult<Category> GetCategory(int categoryId)
+        public ActionResult<BaseResponse<Category>> GetCategory(int categoryId)
         {
             var category = _service.GetCategory(categoryId);
 
-            return Ok(category);
+            BaseResponse<Category> response = new()
+            {
+                Message = "Success !",
+                Content = category
+            };
+
+            return Ok(response);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Category>> GetCategories()
+        public ActionResult<BaseResponse<IEnumerable<Category>>> GetCategories()
         {
-            var list = _service.GetAllCategories();
+            var categories = _service.GetAllCategories();
 
-            return Ok(list);
+            BaseResponse<Category> response = new()
+            {
+                Message = "Success !",
+                ContentList = categories
+            };
+
+            return Ok(response);
         }
 
         [HttpPost]
-        public ActionResult<Category> AddCategory(CategoryDTO categoryDTO)
+        public ActionResult<BaseResponse<Category>> AddCategory(CategoryDTO request)
         {
-            var category = _service.AddCategory(categoryDTO);
+            try
+            {
+                var category = _service.AddCategory(request);
 
-            return Ok(category);
+                BaseResponse<Category> response = new()
+                {
+                    Message = "Success !",
+                    Content = category,
+                };
+
+                return Ok(response);
+            }
+            catch (CategoryAlreadyExistsException error)
+            {
+                return BadRequest(error.Message);
+            }
+            catch (CategoryReferenceExists error)
+            {
+                return BadRequest(error.Message);
+            }
         }
     }
 }

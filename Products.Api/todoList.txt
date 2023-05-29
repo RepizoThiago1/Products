@@ -1,6 +1,6 @@
 ﻿CRIAR OS DTOS DE RETORNO
 
-PADRONIZAR AS CONTROLLERS COM O BASERESPONSE
+PADRONIZAR AS CONTROLLERS COM O BASERESPONSE - feito
 
-1 - padronizar codigos para cadastro de vendas /produtos
-2 - Criar upload de arquivos na api que leia csv
+CRIAR MAILLER PARA ESQUECI MINHA SENHA 
+

@@ -6,6 +6,7 @@ namespace Products.Domain.DTO.Product
     {
         [Required]
         public string Name { get; set; }
+
         [Required]
         public string SKU { get; set; }
 

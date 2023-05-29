@@ -47,6 +47,7 @@ namespace Products.Api.Config
             services.AddScoped<IAuthService, AuthService>(); // so existe a service, utiliza repo do USER para funcionalidades
             services.AddScoped<IProductReferencesService, ProductReferencesService>();
             services.AddScoped<IQATestService, QATestService>();
+            services.AddScoped<IMailerService, MailerService>();
             #endregion 
 
             return services;

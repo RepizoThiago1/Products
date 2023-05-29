@@ -13,10 +13,12 @@ namespace Products.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
+        private readonly IMailerService _mailerService;
 
-        public UserController(IUserService service)
+        public UserController(IUserService service, IMailerService mailerService)
         {
             _service = service;
+            _mailerService = mailerService;
         }
 
         [HttpPost("/api/[controller]/Validate")]
@@ -73,6 +75,22 @@ namespace Products.Api.Controllers
             {
                 return BadRequest(error.Message);
             }
+        }
+
+        [HttpPost("/api/[controller]/ForgotPassword")]
+        public ActionResult<BaseResponse<string>> Email(string request)
+        {
+            try
+            {
+                _mailerService.ForgotPassword(request);
+
+                return Ok("heheboy");
+            }
+            catch (UserNotFoundException error)
+            {
+                return BadRequest(error.Message);
+            }
+
         }
 
         [HttpPut]

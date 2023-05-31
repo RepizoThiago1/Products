@@ -84,7 +84,9 @@ namespace Products.Api.Controllers
             {
                 _mailerService.ForgotPassword(request);
 
-                return Ok("heheboy");
+                BaseResponse<string> response = new() { Message = "An e-mail was sent you" };
+
+                return Ok(response);
             }
             catch (UserNotFoundException error)
             {

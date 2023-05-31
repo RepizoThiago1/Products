@@ -3,7 +3,6 @@ using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
-using Products.Domain.DTO.User;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Repository;
 using Products.Domain.Interfaces.Services;

@@ -5,6 +5,7 @@ using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 using Products.Domain.Responses.@base;
+using System.Net;
 
 namespace Products.Api.Controllers
 {
@@ -27,21 +28,23 @@ namespace Products.Api.Controllers
             try
             {
                 _service.ValidateConfirmKey(key);
-                BaseResponse<string> response = new()
-                {
-                    Message = "Now you're able to use our services!"
-                };
+
+                var response = BaseResponse<string>.ToResponse(HttpStatusCode.Accepted, "Key validated!");
 
                 return Ok(response);
 
             }
             catch (UserNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<string>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
             catch (InvalidConfirmKeyException error)
             {
-                return Conflict(error.Message);
+                var response = BaseResponse<string>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response;
             }
         }
 
@@ -50,22 +53,19 @@ namespace Products.Api.Controllers
         {
             try
             {
-                if (request == null)
-                    return BadRequest("User is null");
+                var registerService = _service.Register(request);
 
-                var user = _service.Register(request);
+                var content = UserDTO.FromEntity(registerService.Email, request.Password);
 
-                BaseResponse<UserDTO> response = new()
-                {
-                    Message = "Registered!",
-                    Content = request
-                };
+                var response = BaseResponse<UserDTO>.ToResponse(HttpStatusCode.Created, "User created!", content);
 
-                return Ok(response);
+                return response;
             }
             catch (UserAlreadyExistsException error)
             {
-                return UnprocessableEntity(error.Message);
+                var response = BaseResponse<UserDTO>.ToResponse(HttpStatusCode.UnprocessableEntity, error.Message);
+
+                return response;
             }
             catch (EmptyPasswordException error)
             {
@@ -84,13 +84,15 @@ namespace Products.Api.Controllers
             {
                 _mailerService.ForgotPassword(request);
 
-                BaseResponse<string> response = new() { Message = "An e-mail was sent you" };
+                var response = BaseResponse<string>.ToResponse(HttpStatusCode.Continue, "An e-mail was sent to your e-mail address");
 
-                return Ok(response);
+                return response;
             }
             catch (UserNotFoundException error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<string>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
 
         }
@@ -101,22 +103,17 @@ namespace Products.Api.Controllers
         {
             try
             {
-                if (request == null)
-                    return BadRequest("User null");
-
                 var user = _service.UpdateRole(request);
 
-                BaseResponse<User> response = new()
-                {
-                    Message = "",
-                    Content = user
-                };
+                var response = BaseResponse<User>.ToResponse(HttpStatusCode.OK, "User updated!", user);
 
-                return Ok(response);
+                return response;
             }
             catch (UserNotFoundException error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<User>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
 
         }

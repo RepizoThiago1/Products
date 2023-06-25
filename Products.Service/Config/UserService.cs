@@ -30,7 +30,6 @@ namespace Products.Service.Config
                 user.IsUserConfirmed = true;
                 _repository.SaveChanges();
             }
-
         }
 
         public User Register(UserDTO userDTO)

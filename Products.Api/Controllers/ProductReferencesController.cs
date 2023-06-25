@@ -2,8 +2,9 @@
 using Products.Domain.DTO.Reference;
 using Products.Domain.Entities;
 using Products.Domain.Exceptions;
+using Products.Domain.Responses.@base;
 using Products.Service.Entities;
-
+using System.Net;
 
 namespace Products.Api.Controllers
 {
@@ -19,20 +20,21 @@ namespace Products.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ProductReferences> AddProductReferences(ProductReferencesDTO request)
+        public ActionResult<BaseResponse<ProductReferences>> AddProductReferences(ProductReferencesDTO request)
         {
             try
             {
-                if (request == null)
-                    return BadRequest();
+                var content = _service.AddReference(request);
 
-                var reference = _service.AddReference(request);
+                var response = BaseResponse<ProductReferences>.ToResponse(HttpStatusCode.Created, "Reference created!", content);
 
-                return Ok(reference);
+                return response;
             }
             catch (ReferenceExistisException error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<ProductReferences>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response;
             }
 
         }

@@ -4,6 +4,7 @@ using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 using Products.Domain.Responses.@base;
+using System.Net;
 
 namespace Products.Api.Controllers
 {
@@ -23,28 +24,23 @@ namespace Products.Api.Controllers
         {
             try
             {
-                var saleOrder = _service.CreateSaleOrder(request);
+                var content = _service.CreateSaleOrder(request);
 
-                if (request == null)
-                {
-                    return BadRequest("Please insert the right json format");
-                }
+                var response = BaseResponse<SalesOrder>.ToResponse(HttpStatusCode.Created, "Order created!", content);
 
-                BaseResponse<SalesOrder> response = new()
-                {
-                    Message = "Order created !",
-                    Content = saleOrder
-                };
-
-                return Ok(response);
+                return response;
             }
             catch (CustomerNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<SalesOrder>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
             catch (ProductNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<SalesOrder>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
 
         }

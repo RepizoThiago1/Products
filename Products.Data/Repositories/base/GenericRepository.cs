@@ -8,6 +8,7 @@ namespace Products.Data.Repositories.@base
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected DataContext _context { get; set; }
+
         internal DbSet<T> dbSet;
         public GenericRepository(DataContext context)
         {
@@ -54,7 +55,6 @@ namespace Products.Data.Repositories.@base
             _context.Set<T>().RemoveRange(entities);
             _context.SaveChanges();
         }
-
         public void SaveChanges()
         {
             _context.SaveChanges();

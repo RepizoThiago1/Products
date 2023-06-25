@@ -5,7 +5,7 @@ using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services.Config;
 using Products.Domain.Responses;
 using Products.Domain.Responses.@base;
-
+using System.Net;
 namespace Products.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -27,28 +27,38 @@ namespace Products.Api.Controllers
 
                 if (!verifyPassword)
                 {
-                    return BadRequest("Wrong password");
+                    var response = BaseResponse<UserAuthResponse>.ToResponse(HttpStatusCode.BadRequest, "Wrong password");
+
+                    return response;
                 }
 
-                string token = _service.CreateToken(request);
+                bool isConfirmKeyActive = _service.VerifyConfirmedKey(request.Email);
 
-                UserAuthResponse userAuthResponse = new()
+                if (isConfirmKeyActive)
                 {
-                    Token = token,
-                    ExpiresIn = 28000,
-                };
+                    var token = _service.CreateToken(request);
 
-                BaseResponse<UserAuthResponse> response = new()
+                    var content = UserAuthResponse.ToResponse(token, 28000);
+
+                    var response = BaseResponse<UserAuthResponse>.ToResponse(HttpStatusCode.OK, "Logged in!", content);
+
+                    return response;
+                }
+                else
                 {
-                    Message = "Logged in!",
-                    Content = userAuthResponse,
-                };
+                    var message = "Account not able to use our services, please confirm your account first";
 
-                return Ok(response);
+                    var response = BaseResponse<UserAuthResponse>.ToResponse(HttpStatusCode.BadRequest, message);
+
+                    return response;
+                }
+
             }
             catch (UserNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<UserAuthResponse>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
         }
         [HttpPost("/api/Auth/Data"), Authorize]
@@ -58,17 +68,15 @@ namespace Products.Api.Controllers
             {
                 var user = _service.GetUserFromJwt(request);
 
-                BaseResponse<UserAuthResponseDTO> response = new()
-                {
-                    Message = "Success, user found!",
-                    Content = user,
-                };
+                var response = BaseResponse<UserAuthResponseDTO>.ToResponse(HttpStatusCode.OK, "Success, user found!", user);
 
-                return Ok(response);
+                return response;
             }
             catch (UserNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<UserAuthResponseDTO>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
 
         }

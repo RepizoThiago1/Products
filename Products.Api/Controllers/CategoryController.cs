@@ -4,6 +4,7 @@ using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 using Products.Domain.Responses.@base;
+using System.Net;
 
 namespace Products.Api.Controllers
 {
@@ -21,29 +22,21 @@ namespace Products.Api.Controllers
         [HttpGet("{categoryId}")]
         public ActionResult<BaseResponse<Category>> GetCategory(int categoryId)
         {
-            var category = _service.GetCategory(categoryId);
+            var content = _service.GetCategory(categoryId);
 
-            BaseResponse<Category> response = new()
-            {
-                Message = "Success !",
-                Content = category
-            };
+            var response = BaseResponse<Category>.ToResponse(HttpStatusCode.Found, "Category found!", content);
 
-            return Ok(response);
+            return response;
         }
 
         [HttpGet]
         public ActionResult<BaseResponse<IEnumerable<Category>>> GetCategories()
         {
-            var categories = _service.GetAllCategories();
+            var contentList = _service.GetAllCategories();
 
-            BaseResponse<Category> response = new()
-            {
-                Message = "Success !",
-                ContentList = categories
-            };
+            var response = BaseResponse<IEnumerable<Category>>.ToResponse(HttpStatusCode.Found, "Categories found!", contentList);
 
-            return Ok(response);
+            return response;
         }
 
         [HttpPost]
@@ -51,23 +44,23 @@ namespace Products.Api.Controllers
         {
             try
             {
-                var category = _service.AddCategory(request);
+                var content = _service.AddCategory(request);
 
-                BaseResponse<Category> response = new()
-                {
-                    Message = "Success !",
-                    Content = category,
-                };
+                var response = BaseResponse<Category>.ToResponse(HttpStatusCode.Created, "Category created!", content);
 
-                return Ok(response);
+                return response;
             }
             catch (CategoryAlreadyExistsException error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<Category>.ToResponse(HttpStatusCode.UnprocessableEntity, error.Message);
+
+                return response;
             }
             catch (CategoryReferenceExists error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<Category>.ToResponse(HttpStatusCode.UnprocessableEntity, error.Message);
+
+                return response;
             }
         }
     }

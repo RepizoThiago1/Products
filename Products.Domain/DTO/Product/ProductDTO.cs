@@ -24,5 +24,6 @@ namespace Products.Domain.DTO.Product
 
         [Required]
         public string Note { get; set; }
+
     }
 }

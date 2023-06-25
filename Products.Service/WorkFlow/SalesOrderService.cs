@@ -64,8 +64,9 @@ namespace Products.Service.WorkFlow
 
             foreach (var product in products)
             {
-                // cria a lista fazendo a query via linq 
-                var item = _productRepository.Find(p => p.SKU == product.SKU).FirstOrDefault(p => p.Quantity > 0 && p.IsActive == true);
+                // procura o produto da request
+                var item = _productRepository.Find(p => p.SKU == product.SKU).FirstOrDefault(p => p.Quantity > 0 && p.IsActive == true) 
+                                              ?? throw new ProductNotFoundException("While preparing your order we couldn't find the product");
 
                 //Inclui o item dentro da lista caso for encontrado
                 if (item != null)
@@ -83,10 +84,6 @@ namespace Products.Service.WorkFlow
                     item.UpdatedAt = DateTime.Now;
                     _orderDetailsRepository.Add(orderDetail);
                     _productRepository.SaveChanges();
-                }
-                else
-                {
-                    throw new ProductNotFoundException("While preparing your order we couldn't find the product");
                 }
             }
 

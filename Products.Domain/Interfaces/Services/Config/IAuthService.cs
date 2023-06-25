@@ -7,5 +7,6 @@ namespace Products.Domain.Interfaces.Services.Config
         public string CreateToken(UserDTO userDTO);
         public bool VerifyPasswordHash(UserDTO userDTO);
         public UserAuthResponseDTO GetUserFromJwt(string token);
+        public bool VerifyConfirmedKey(string email);
     }
 }

@@ -4,6 +4,7 @@ using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 using Products.Domain.Responses.@base;
+using System.Net;
 
 namespace Products.Api.Controllers
 {
@@ -21,29 +22,21 @@ namespace Products.Api.Controllers
         [HttpGet("{customerId}")]
         public ActionResult<BaseResponse<Customer>> GetCustomer(int customerId)
         {
-            var customer = _service.GetCostumer(customerId);
+            var content = _service.GetCostumer(customerId);
 
-            BaseResponse<Customer> response = new()
-            {
-                Message = "Success !",
-                Content = customer,
-            };
+            var response = BaseResponse<Customer>.ToResponse(HttpStatusCode.Found, "Customer found!", content);
 
-            return Ok(response);
+            return response;
         }
 
         [HttpGet]
         public ActionResult<BaseResponse<IEnumerable<Customer>>> GetCustomers()
         {
-            var customers = _service.GetAllCostumers();
+            var contentList = _service.GetAllCostumers();
 
-            BaseResponse<Customer> response = new()
-            {
-                Message = "Success !",
-                ContentList = customers,
-            };
+            var response = BaseResponse<IEnumerable<Customer>>.ToResponse(HttpStatusCode.Found, "Customers found!", contentList);
 
-            return Ok(response);
+            return response;
         }
 
         [HttpPost]
@@ -51,23 +44,23 @@ namespace Products.Api.Controllers
         {
             try
             {
-                var customer = _service.AddCustomer(request);
+                var content = _service.AddCustomer(request);
 
-                BaseResponse<Customer> response = new()
-                {
-                    Message = "Success !",
-                    Content = customer,
-                };
+                var response = BaseResponse<Customer>.ToResponse(HttpStatusCode.Created, "Customer created!", content);
 
-                return Ok(customer);
+                return response;
             }
             catch (CustomerCodeExistsException error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<Customer>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response;
             }
             catch (CustomerNameExistsException error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<Customer>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response; ;
             }
 
         }

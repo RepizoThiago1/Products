@@ -4,6 +4,7 @@ using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 using Products.Domain.Responses.@base;
+using System.Net;
 
 namespace Products.Api.Controllers
 {
@@ -23,27 +24,29 @@ namespace Products.Api.Controllers
         {
             try
             {
-                var QATest = _service.ApproveProduct(request);
+                var content = _service.ApproveProduct(request);
 
-                BaseResponse<QATest> response = new()
-                {
-                    Message = "Success !",
-                    Content = QATest,
-                };
+                var response = BaseResponse<QATest>.ToResponse(HttpStatusCode.Created, "Test done!", content);
 
-                return Ok(response);
+                return response;
             }
             catch (QATestNotApprovedException error)
             {
-                return Conflict(error.Message);
+                var response = BaseResponse<QATest>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response;
             }
             catch (ProductNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<QATest>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
             catch (ReferenceNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<QATest>.ToResponse(HttpStatusCode.NotFound, error.Message);
+
+                return response;
             }
         }
     }

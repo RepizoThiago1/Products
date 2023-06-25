@@ -25,7 +25,7 @@ namespace Products.Service.Config
         }
         public string CreateToken(UserDTO userDTO)
         {
-            var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault() ?? throw new UserNotFoundException();
+            var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault() ?? throw new UserNotFoundException("User not found");
 
             var token = CreateToken(user);
 
@@ -35,12 +35,9 @@ namespace Products.Service.Config
         {
             var user = _repository.Find(x => x.Email == userDTO.Email).FirstOrDefault();
 
-            if (user == null)
-            {
-                return false;
-            }
-
-            return VerifyPasswordHash(userDTO.Password, user.PasswordHash, user.PasswordSalt);
+            return user == null
+                ? throw new UserNotFoundException("User not found")
+                : VerifyPasswordHash(userDTO.Password, user.PasswordHash, user.PasswordSalt);
         }
         public UserAuthResponseDTO GetUserFromJwt(string token)
         {
@@ -58,6 +55,20 @@ namespace Products.Service.Config
             return (userAuthDTO);
         }
 
+        public bool VerifyConfirmedKey(string email)
+        {
+            var user = _userRepository.Find(u => u.Email == email).SingleOrDefault();
+
+            if (user != null)
+            {
+                if (user.IsUserConfirmed)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         #region PrivateMethods
         private string DecodeToken(string token)
         {

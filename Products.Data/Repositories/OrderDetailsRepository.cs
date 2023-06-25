@@ -10,7 +10,6 @@ namespace Products.Data.Repositories
         public OrderDetailsRepository(DataContext context) : base(context)
         {
         }
-
         public void SaveChanges()
         {
             _context.SaveChanges();

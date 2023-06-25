@@ -4,6 +4,7 @@ using Products.Domain.Entities;
 using Products.Domain.Exceptions;
 using Products.Domain.Interfaces.Services;
 using Products.Domain.Responses.@base;
+using System.Net;
 
 namespace Products.Api.Controllers
 {
@@ -21,29 +22,21 @@ namespace Products.Api.Controllers
         [HttpGet("{productId}")]
         public ActionResult<BaseResponse<Product>> GetProduct(int productId)
         {
-            var product = _service.GetProduct(productId);
+            var content = _service.GetProduct(productId);
 
-            BaseResponse<Product> response = new()
-            {
-                Message = "Success !",
-                Content = product
-            };
+            var response = BaseResponse<Product>.ToResponse(HttpStatusCode.Found, "Product found!", content);
 
-            return Ok(response);
+            return response;
         }
 
         [HttpGet]
         public ActionResult<BaseResponse<IEnumerable<Product>>> GetProducts()
         {
-            var products = _service.GetAllProducts();
+            var contentList = _service.GetAllProducts();
 
-            BaseResponse<Product> response = new()
-            {
-                Message = "Success !",
-                ContentList = products,
-            };
+            var response = BaseResponse<IEnumerable<Product>>.ToResponse(HttpStatusCode.Found, "Products found!", contentList);
 
-            return Ok(response);
+            return response;
         }
 
         [HttpPost]
@@ -51,29 +44,29 @@ namespace Products.Api.Controllers
         {
             try
             {
-                var product = _service.AddProduct(request);
+                var content = _service.AddProduct(request);
 
-                _service.GetProduct(product.Id);
-
-                BaseResponse<Product> response = new()
-                {
-                    Message = "Success !",
-                    Content = product
-                };
+                var response = BaseResponse<ProductDTO>.ToResponse(HttpStatusCode.Created, "Product created!", request);
 
                 return Ok(response);
             }
             catch (InvalidPriceException error)
             {
-                return BadRequest(error.Message);
+                var response = BaseResponse<ProductDTO>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response;
             }
             catch (ReferenceNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<ProductDTO>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response;
             }
             catch (CategoryNotFoundException error)
             {
-                return NotFound(error.Message);
+                var response = BaseResponse<ProductDTO>.ToResponse(HttpStatusCode.Conflict, error.Message);
+
+                return response;
             }
         }
     }
